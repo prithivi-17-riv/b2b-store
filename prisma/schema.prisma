@@ -1,0 +1,482 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  phone        String?
+  passwordHash String
+  role         String    // "ADMIN" | "SALES_EMPLOYEE" | "WAREHOUSE_STAFF" | "DELIVERY_STAFF"
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  employeeProfile  EmployeeProfile?
+  assignedCustomers Customer[]      @relation("AssignedSalesEmployee")
+  ordersCreated    Order[]          @relation("SalesOrders")
+  paymentsReceived Payment[]        @relation("UserPayments")
+  deliveries       Delivery[]       @relation("UserDeliveries")
+  auditLogs        AuditLog[]
+}
+
+model EmployeeProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode String   @unique
+  territory    String?
+  notes        String?
+}
+
+model CompanyProfile {
+  id                 String   @id @default(cuid())
+  name               String   @default("Annapoorna Wholesale Distributors Pvt Ltd")
+  tradeName          String?  @default("Annapoorna FMCG Direct")
+  gstin              String   @default("33AAACA1234A1Z5")
+  pan                String   @default("AAACA1234A")
+  address            String   @default("Plot No 45, Industrial Estate, Hope College")
+  city               String   @default("Coimbatore")
+  state              String   @default("Tamil Nadu")
+  stateCode          String   @default("33")
+  pincode            String   @default("641014")
+  phone              String   @default("+91 98765 43210")
+  email              String   @default("sales@annapoornab2b.com")
+  bankName           String   @default("HDFC Bank")
+  bankAccountNumber  String   @default("50200012345678")
+  bankIfsc           String   @default("HDFC0000123")
+  bankBranch         String   @default("Avinashi Road, Coimbatore")
+  termsAndConditions String   @default("1. Payment strictly due as per agreed credit terms.\n2. Goods once sold cannot be returned without authorized Return authorization.\n3. Subject to Coimbatore Jurisdiction only.")
+  invoicePrefix      String   @default("INV-2026-")
+  invoiceNextNumber  Int      @default(1001)
+  orderPrefix        String   @default("ORD-")
+  orderNextNumber    Int      @default(5001)
+  creditNotePrefix   String   @default("CN-")
+  creditNoteNextNumber Int    @default(201)
+}
+
+model TaxConfiguration {
+  id        String   @id @default(cuid())
+  name      String   // e.g. "GST 5%", "GST 12%", "GST 18%", "GST 0%"
+  cgstRate  Float    @default(2.5)
+  sgstRate  Float    @default(2.5)
+  igstRate  Float    @default(5.0)
+  cessRate  Float    @default(0.0)
+  isDefault Boolean  @default(false)
+  isActive  Boolean  @default(true)
+}
+
+model Customer {
+  id                 String   @id @default(cuid())
+  customerCode       String   @unique
+  storeName          String
+  ownerName          String
+  phone              String
+  altPhone           String?
+  email              String?
+  billingAddress     String
+  deliveryAddress    String
+  city               String
+  district           String
+  state              String   @default("Tamil Nadu")
+  stateCode          String   @default("33")
+  pincode            String
+  gstin              String?
+  pan                String?
+  customerType       String   @default("SUPERMARKET") // "SUPERMARKET", "KIRANA_STORE", "WHOLESALER", "RETAILER", "HOTEL_INSTITUTION"
+  assignedEmployeeId String?
+  assignedEmployee   User?    @relation("AssignedSalesEmployee", fields: [assignedEmployeeId], references: [id])
+  creditLimit        Float    @default(100000)
+  paymentTermsDays   Int      @default(15)
+  openingBalance     Float    @default(0)
+  currentOutstanding Float    @default(0)
+  isActive           Boolean  @default(true)
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  orders             Order[]
+  invoices           Invoice[]
+  payments           Payment[]
+  ledgerEntries      CustomerLedger[]
+  returnRequests     ReturnRequest[]
+  creditNotes        CreditNote[]
+}
+
+model CustomerLedger {
+  id              String   @id @default(cuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  transactionDate DateTime @default(now())
+  type            String   // "OPENING_BALANCE", "INVOICE", "PAYMENT", "CREDIT_NOTE", "DEBIT_NOTE"
+  referenceId     String?
+  referenceNumber String?
+  debitAmount     Float    @default(0) // Increases outstanding (e.g. Invoice)
+  creditAmount    Float    @default(0) // Decreases outstanding (e.g. Payment, Credit Note)
+  runningBalance  Float    @default(0)
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+model ProductCategory {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  code        String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  products    Product[]
+}
+
+model Product {
+  id               String          @id @default(cuid())
+  sku              String          @unique
+  barcode          String?         @unique
+  name             String
+  brand            String?
+  categoryId       String
+  category         ProductCategory @relation(fields: [categoryId], references: [id])
+  description      String?
+  uom              String          @default("KG") // "KG", "GRAM", "LITRE", "ML", "PIECE", "BOX", "CARTON", "BAG", "PACKET"
+  packSize         String?         // e.g. "25 kg Bag", "1 Litre Pouch", "10 kg Tin"
+  hsnCode          String
+  gstRate          Float           @default(5.0) // 0, 5, 12, 18, 28
+  cessRate         Float           @default(0.0)
+  mrp              Float
+  purchasePrice    Float
+  minStockLevel    Float           @default(10)
+  isBatchTracked   Boolean         @default(true)
+  isExpiryTracked  Boolean         @default(true)
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  prices           ProductPrice[]
+  inventoryStocks  InventoryStock[]
+  inventoryBatches InventoryBatch[]
+  orderItems       OrderItem[]
+  invoiceItems     InvoiceItem[]
+  returnItems      ReturnItem[]
+}
+
+model PriceCategory {
+  id          String         @id @default(cuid())
+  name        String         @unique // "Bulk", "Loose", "Wholesale", "Retail", "Special"
+  code        String         @unique
+  description String?
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+
+  productPrices ProductPrice[]
+  orders        Order[]
+}
+
+model ProductPrice {
+  id              String        @id @default(cuid())
+  productId       String
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  priceCategoryId String
+  priceCategory   PriceCategory @relation(fields: [priceCategoryId], references: [id], onDelete: Cascade)
+  price           Float         // Product + Price Category = Selling Price
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([productId, priceCategoryId])
+}
+
+model Warehouse {
+  id           String           @id @default(cuid())
+  name         String
+  code         String           @unique
+  address      String
+  city         String           @default("Coimbatore")
+  managerName  String?
+  contactPhone String?
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+
+  stocks       InventoryStock[]
+  batches      InventoryBatch[]
+  movements    StockMovement[]
+  orders       Order[]
+}
+
+model InventoryStock {
+  id                 String    @id @default(cuid())
+  warehouseId        String
+  warehouse          Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  productId          String
+  product            Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  availableQuantity  Float     @default(0)
+  reservedQuantity   Float     @default(0)
+  dispatchedQuantity Float     @default(0)
+  damagedQuantity    Float     @default(0)
+  returnedQuantity   Float     @default(0)
+  updatedAt          DateTime  @updatedAt
+
+  @@unique([warehouseId, productId])
+}
+
+model InventoryBatch {
+  id                String    @id @default(cuid())
+  warehouseId       String
+  warehouse         Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  productId         String
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  batchNumber       String
+  manufacturingDate DateTime?
+  expiryDate        DateTime?
+  quantity          Float     @default(0)
+  purchasePrice     Float     @default(0)
+  status            String    @default("ACTIVE") // "ACTIVE", "EXPIRED", "QUARANTINED"
+  createdAt         DateTime  @default(now())
+
+  @@unique([warehouseId, productId, batchNumber])
+}
+
+model StockMovement {
+  id                String    @id @default(cuid())
+  warehouseId       String
+  warehouse         Warehouse @relation(fields: [warehouseId], references: [id])
+  productId         String
+  batchId           String?
+  movementType      String    // "PURCHASE_RECEIPT", "ORDER_RESERVED", "ORDER_DISPATCH", "RETURN_INWARD", "ADJUSTMENT_ADD", "ADJUSTMENT_DAMAGE", "TRANSFER"
+  quantity          Float
+  referenceType     String?   // "ORDER", "INVOICE", "RETURN", "MANUAL_ADJUSTMENT"
+  referenceId       String?
+  performedByUserId String?
+  timestamp         DateTime  @default(now())
+  notes             String?
+}
+
+model Order {
+  id                     String        @id @default(cuid())
+  orderNumber            String        @unique
+  customerId             String
+  customer               Customer      @relation(fields: [customerId], references: [id])
+  salesEmployeeId        String
+  salesEmployee          User          @relation("SalesOrders", fields: [salesEmployeeId], references: [id])
+  priceCategoryId        String
+  priceCategory          PriceCategory @relation(fields: [priceCategoryId], references: [id])
+  warehouseId            String
+  warehouse              Warehouse     @relation(fields: [warehouseId], references: [id])
+  status                 String        @default("SUBMITTED") 
+  // "DRAFT", "SUBMITTED", "APPROVED", "STOCK_RESERVED", "PICKING", "PACKED", "DISPATCHED", "DELIVERED", "CANCELLED", "REJECTED", "PARTIALLY_FULFILLED"
+  orderDate              DateTime      @default(now())
+  itemCount              Int           @default(0)
+  totalQuantity          Float         @default(0)
+  subtotal               Float         @default(0)
+  discountAmount         Float         @default(0)
+  taxableAmount          Float         @default(0)
+  cgstAmount             Float         @default(0)
+  sgstAmount             Float         @default(0)
+  igstAmount             Float         @default(0)
+  cessAmount             Float         @default(0)
+  roundOff               Float         @default(0)
+  grandTotal             Float         @default(0)
+  isCreditLimitOverridden Boolean      @default(false)
+  overriddenByUserId     String?
+  notes                  String?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  items                  OrderItem[]
+  invoice                Invoice?
+  delivery               Delivery?
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  productName     String
+  hsnCode         String
+  uom             String
+  quantity        Float
+  unitRate        Float    // Rate based on selected Price Category
+  discountPercent Float    @default(0)
+  discountAmount  Float    @default(0)
+  taxableAmount   Float
+  gstRate         Float    @default(5.0)
+  cgstRate        Float    @default(2.5)
+  cgstAmount      Float    @default(0)
+  sgstRate        Float    @default(2.5)
+  sgstAmount      Float    @default(0)
+  igstRate        Float    @default(0)
+  igstAmount      Float    @default(0)
+  totalAmount     Float
+}
+
+model Invoice {
+  id                     String        @id @default(cuid())
+  invoiceNumber          String        @unique
+  orderId                String?       @unique
+  order                  Order?        @relation(fields: [orderId], references: [id])
+  customerId             String
+  customer               Customer      @relation(fields: [customerId], references: [id])
+  invoiceDate            DateTime      @default(now())
+  dueDate                DateTime
+  placeOfSupplyStateCode String        @default("33")
+  isInterstate           Boolean       @default(false)
+  billingAddress         String
+  shippingAddress        String
+  customerGstin          String?
+  taxableAmount          Float         @default(0)
+  cgstAmount             Float         @default(0)
+  sgstAmount             Float         @default(0)
+  igstAmount             Float         @default(0)
+  cessAmount             Float         @default(0)
+  roundOff               Float         @default(0)
+  grandTotal             Float         @default(0)
+  amountInWords          String?
+  paidAmount             Float         @default(0)
+  balanceAmount          Float         @default(0)
+  paymentStatus          String        @default("UNPAID") // "UNPAID", "PARTIALLY_PAID", "PAID", "OVERDUE"
+  notes                  String?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  items                  InvoiceItem[]
+  payments               Payment[]
+  returnRequests         ReturnRequest[]
+  creditNotes            CreditNote[]
+  delivery               Delivery?
+}
+
+model InvoiceItem {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  productName   String
+  hsnCode       String
+  uom           String
+  quantity      Float
+  unitRate      Float
+  taxableAmount Float
+  gstRate       Float
+  cgstAmount    Float    @default(0)
+  sgstAmount    Float    @default(0)
+  igstAmount    Float    @default(0)
+  totalAmount   Float
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  paymentNumber   String   @unique
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  invoiceId       String?
+  invoice         Invoice? @relation(fields: [invoiceId], references: [id])
+  amount          Float
+  paymentMethod   String   @default("UPI") // "CASH", "UPI", "BANK_TRANSFER", "CHEQUE", "CREDIT"
+  referenceNumber String?  // UTR / Cheque Number / Transaction ID
+  paymentDate     DateTime @default(now())
+  receivedByUserId String?
+  receivedByUser  User?    @relation("UserPayments", fields: [receivedByUserId], references: [id])
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+model ReturnRequest {
+  id                String       @id @default(cuid())
+  returnNumber      String       @unique
+  invoiceId         String
+  invoice           Invoice      @relation(fields: [invoiceId], references: [id])
+  customerId        String
+  customer          Customer     @relation(fields: [customerId], references: [id])
+  status            String       @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  reason            String       // "DAMAGED", "EXPIRED", "WRONG_PRODUCT", "WRONG_QUANTITY", "CUSTOMER_REJECTION", "OTHER"
+  totalRefundAmount Float        @default(0)
+  approvedByUserId  String?
+  notes             String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  items             ReturnItem[]
+  creditNote        CreditNote?
+}
+
+model ReturnItem {
+  id                    String        @id @default(cuid())
+  returnRequestId       String
+  returnRequest         ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+  productId             String
+  product               Product       @relation(fields: [productId], references: [id])
+  quantity              Float
+  unitRate              Float
+  taxableAmount         Float
+  gstAmount             Float
+  totalAmount           Float
+  isRestockedToWarehouse Boolean      @default(false)
+}
+
+model CreditNote {
+  id               String        @id @default(cuid())
+  creditNoteNumber String        @unique
+  returnRequestId  String?       @unique
+  returnRequest    ReturnRequest? @relation(fields: [returnRequestId], references: [id])
+  invoiceId        String
+  invoice          Invoice       @relation(fields: [invoiceId], references: [id])
+  customerId       String
+  customer         Customer      @relation(fields: [customerId], references: [id])
+  amount           Float
+  taxAmount        Float         @default(0)
+  grandTotal       Float
+  date             DateTime      @default(now())
+  notes            String?
+  createdAt        DateTime      @default(now())
+}
+
+model Delivery {
+  id                   String    @id @default(cuid())
+  orderId              String    @unique
+  order                Order     @relation(fields: [orderId], references: [id])
+  invoiceId            String?   @unique
+  invoice              Invoice?  @relation(fields: [invoiceId], references: [id])
+  deliveryEmployeeId   String?
+  deliveryEmployee     User?     @relation("UserDeliveries", fields: [deliveryEmployeeId], references: [id])
+  vehicleNumber        String?
+  dispatchTimestamp    DateTime?
+  expectedDeliveryDate DateTime?
+  actualDeliveryDate   DateTime?
+  status               String    @default("PENDING") // "PENDING", "DISPATCHED", "OUT_FOR_DELIVERY", "DELIVERED", "FAILED"
+  proofOfDeliveryNotes String?
+  recipientName        String?
+  recipientPhone       String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+  userName      String?
+  userRole      String?
+  action        String   // "LOGIN", "CREATE_ORDER", "UPDATE_ORDER", "APPROVE_ORDER", "GENERATE_INVOICE", "RECORD_PAYMENT", "UPDATE_PRICING", "STOCK_ADJUSTMENT", etc.
+  entityType    String   // "ORDER", "INVOICE", "PRODUCT", "CUSTOMER", "PRICE", "PAYMENT", "STOCK"
+  entityId      String?
+  oldValuesJson String?
+  newValuesJson String?
+  ipAddress     String?
+  timestamp     DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String   // "LOW_STOCK", "EXPIRY_WARNING", "OVERDUE_PAYMENT", "NEW_ORDER", "ORDER_APPROVAL", "CREDIT_LIMIT_BLOCKED"
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  linkUrl   String?
+  createdAt DateTime @default(now())
+}
