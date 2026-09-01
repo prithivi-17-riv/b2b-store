@@ -8,17 +8,11 @@ import {
   TrendingUp,
   ShoppingCart,
   Clock,
-  AlertCircle,
-  PackageX,
-  Truck,
   ArrowRight,
   PlusCircle,
   CheckCircle2,
   Users,
   Building,
-  DollarSign,
-  AlertTriangle,
-  Calendar,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -56,8 +50,7 @@ export default function Dashboard() {
 
   const today = data?.today || { sales: 0, orders: 0 };
   const ordersSummary = data?.ordersSummary || {};
-  const finance = data?.finance || { totalOutstanding: 0, nearLimitCount: 0 };
-  const inventoryAlerts = data?.inventoryAlerts || { lowStockCount: 0, lowStockItems: [], expiringBatchesCount: 0, expiringBatches: [] };
+  const stats = data?.stats || { totalCustomers: 0 };
   const recentOrders = data?.recentOrders || [];
   const employeePerformance = data?.employeePerformance || [];
 
@@ -73,7 +66,7 @@ export default function Dashboard() {
             </span>
           </div>
           <p className="text-xs text-slate-300 mt-1">
-            Real-time B2B Wholesale Distribution, Inventory Batches & GST Billing Overview
+            Real-time B2B Wholesale Distribution & GST Billing Overview
           </p>
         </div>
         {(user?.role === 'ADMIN' || user?.role === 'SALES_EMPLOYEE') && (
@@ -87,8 +80,8 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Primary KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Primary KPI Cards (3 Cards) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Today's Sales */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
@@ -106,88 +99,42 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Pending Orders */}
+        {/* Active Orders */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Orders</span>
-            <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Orders</span>
+            <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
               <Clock className="w-5 h-5" />
             </div>
           </div>
           <p className="text-2xl font-black text-slate-900 mt-2">
-            {ordersSummary.pending || 0}
+            {ordersSummary.active || 0}
           </p>
           <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-500 font-medium">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-            <span>{ordersSummary.approved || 0} approved, {ordersSummary.processing || 0} in packing</span>
+            <span>{ordersSummary.delivered || 0} orders delivered</span>
           </div>
         </div>
 
-        {/* Customer Outstanding */}
+        {/* Total Customers */}
         <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Customer Outstanding</span>
-            <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-              <DollarSign className="w-5 h-5" />
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Registered Stores</span>
+            <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+              <Users className="w-5 h-5" />
             </div>
           </div>
           <p className="text-2xl font-black text-slate-900 mt-2">
-            {formatIndianCurrency(finance.totalOutstanding)}
+            {stats.totalCustomers || 0} Stores
           </p>
-          <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-600 font-medium">
-            <AlertCircle className="w-3.5 h-3.5" />
-            <span>{finance.nearLimitCount} accounts near credit limit</span>
-          </div>
-        </div>
-
-        {/* Inventory & Expiry Alerts */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Stock Alerts</span>
-            <div className="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-bold">
-              <PackageX className="w-5 h-5" />
-            </div>
-          </div>
-          <p className="text-2xl font-black text-slate-900 mt-2">
-            {inventoryAlerts.lowStockCount || 0} Items
-          </p>
-          <div className="flex items-center gap-1.5 mt-2 text-xs text-red-600 font-medium">
-            <AlertTriangle className="w-3.5 h-3.5" />
-            <span>{inventoryAlerts.expiringBatchesCount || 0} batches expiring soon</span>
+          <div className="flex items-center gap-1.5 mt-2 text-xs text-purple-600 font-medium">
+            <Building className="w-3.5 h-3.5" />
+            <span>Supermarkets & Retail Partners</span>
           </div>
         </div>
       </div>
 
-      {/* Order Pipeline & Status Progress Tracker */}
-      <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs">
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-          Order Pipeline Status
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-          <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-            <span className="text-xs text-slate-500 font-medium">Submitted</span>
-            <p className="text-xl font-bold text-slate-800 mt-1">{ordersSummary.pending || 0}</p>
-          </div>
-          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <span className="text-xs text-blue-700 font-medium">Approved</span>
-            <p className="text-xl font-bold text-blue-900 mt-1">{ordersSummary.approved || 0}</p>
-          </div>
-          <div className="p-3 bg-amber-50 rounded-lg border border-amber-100">
-            <span className="text-xs text-amber-700 font-medium">Picking/Packed</span>
-            <p className="text-xl font-bold text-amber-900 mt-1">{ordersSummary.processing || 0}</p>
-          </div>
-          <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
-            <span className="text-xs text-purple-700 font-medium">Dispatched</span>
-            <p className="text-xl font-bold text-purple-900 mt-1">{ordersSummary.dispatched || 0}</p>
-          </div>
-          <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-            <span className="text-xs text-emerald-700 font-medium">Delivered</span>
-            <p className="text-xl font-bold text-emerald-900 mt-1">{ordersSummary.delivered || 0}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Two-Column Grid: Recent Orders & Inventory Alerts */}
+      {/* Two-Column Grid: Recent Orders & Sales Team Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Orders List (2 Cols) */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
@@ -216,9 +163,11 @@ export default function Dashboard() {
                       <Link href={`/orders/${o.id}`} className="text-xs font-bold text-slate-900 hover:text-emerald-600 truncate">
                         {o.orderNumber}
                       </Link>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                        {o.priceCategory?.name}
-                      </span>
+                      {o.priceCategory?.name && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                          {o.priceCategory.name}
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-slate-600 font-medium mt-0.5 truncate">
                       {o.customer?.storeName} • <span className="text-slate-400">{o.customer?.city}</span>
@@ -233,12 +182,11 @@ export default function Dashboard() {
                     <span className={clsx(
                       'inline-block px-2 py-0.5 mt-1 rounded text-[10px] font-bold uppercase tracking-wider',
                       o.status === 'DELIVERED' && 'bg-emerald-100 text-emerald-800',
-                      o.status === 'DISPATCHED' && 'bg-purple-100 text-purple-800',
-                      o.status === 'APPROVED' && 'bg-blue-100 text-blue-800',
-                      o.status === 'SUBMITTED' && 'bg-amber-100 text-amber-800',
-                      o.status === 'DRAFT' && 'bg-slate-100 text-slate-700',
+                      o.status === 'CONFIRMED' && 'bg-blue-100 text-blue-800',
+                      o.status === 'CANCELLED' && 'bg-red-100 text-red-800',
+                      !['DELIVERED', 'CONFIRMED', 'CANCELLED'].includes(o.status) && 'bg-slate-100 text-slate-700'
                     )}>
-                      {o.status}
+                      {o.status.replace('_', ' ')}
                     </span>
                   </div>
                 </div>
@@ -247,45 +195,18 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Right Column: Low Stock Items & Sales Performance */}
-        <div className="space-y-6">
-          {/* Low Stock Alerts */}
+        {/* Right Column: Sales Performance Activity */}
+        <div>
           <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Low Stock Warnings</h2>
-              <Link href="/inventory" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
-                Inventory
-              </Link>
+            <div className="p-4 border-b border-slate-100">
+              <h2 className="text-sm font-bold text-slate-900">Sales Team Activity</h2>
+              <p className="text-xs text-slate-500">Representative performance</p>
             </div>
             <div className="divide-y divide-slate-100">
-              {inventoryAlerts.lowStockItems.length === 0 ? (
-                <div className="p-4 text-center text-xs text-emerald-600 font-medium">
-                  ✓ All products are stocked above minimum levels
-                </div>
+              {employeePerformance.length === 0 ? (
+                <div className="p-6 text-center text-xs text-slate-400">No representative data yet</div>
               ) : (
-                inventoryAlerts.lowStockItems.map((item: any) => (
-                  <div key={item.id} className="p-3 text-xs flex items-center justify-between">
-                    <div>
-                      <p className="font-bold text-slate-800">{item.name}</p>
-                      <p className="text-[11px] text-slate-400">Min: {item.minStockLevel} {item.uom}</p>
-                    </div>
-                    <span className="font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200">
-                      {item.available} {item.uom} left
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Sales Employee Leaderboard */}
-          {user?.role === 'ADMIN' && (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-              <div className="p-4 border-b border-slate-100">
-                <h2 className="text-sm font-bold text-slate-900">Sales Team Activity</h2>
-              </div>
-              <div className="divide-y divide-slate-100">
-                {employeePerformance.map((emp: any) => (
+                employeePerformance.map((emp: any) => (
                   <div key={emp.id} className="p-3 text-xs flex items-center justify-between">
                     <div>
                       <p className="font-bold text-slate-800">{emp.name}</p>
@@ -295,10 +216,10 @@ export default function Dashboard() {
                       {formatIndianCurrency(emp.totalSales)}
                     </span>
                   </div>
-                ))}
-              </div>
+                ))
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

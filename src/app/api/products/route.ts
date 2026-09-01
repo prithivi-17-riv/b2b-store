@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
         totalReserved,
         priceMap,
         currentRate,
-        isLowStock: totalStock <= p.minStockLevel,
+        isLowStock: false,
       };
     });
 

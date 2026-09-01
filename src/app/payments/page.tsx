@@ -214,7 +214,7 @@ function PaymentsContent() {
                   <option value="">-- Choose Customer Store --</option>
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.storeName} (Due: ₹{c.currentOutstanding.toLocaleString()})
+                      {c.storeName} ({c.city})
                     </option>
                   ))}
                 </select>

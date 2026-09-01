@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const warehouseId = searchParams.get('warehouseId');
     const categoryId = searchParams.get('categoryId');
-    const lowStockOnly = searchParams.get('lowStockOnly') === 'true';
 
     const whereProduct: any = { isActive: true };
     if (categoryId) whereProduct.categoryId = categoryId;
@@ -62,14 +61,11 @@ export async function GET(req: NextRequest) {
         damaged,
         returned,
         totalStock,
-        isLowStock,
         valuation: Number((available * p.purchasePrice).toFixed(2)),
       };
     });
 
-    const filtered = lowStockOnly ? inventoryList.filter((item) => item.isLowStock) : inventoryList;
-
-    return NextResponse.json({ inventory: filtered });
+    return NextResponse.json({ inventory: inventoryList });
   } catch (error: any) {
     console.error('Fetch inventory error:', error);
     return NextResponse.json({ error: error.message || 'Failed to fetch inventory' }, { status: 500 });

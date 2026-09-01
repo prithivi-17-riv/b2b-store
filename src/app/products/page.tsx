@@ -234,10 +234,7 @@ export default function ProductsPage() {
                         {typeof looseRate === 'number' ? formatIndianCurrency(looseRate) : looseRate}
                       </td>
                       <td className="p-3.5 text-right">
-                        <span className={clsx(
-                          'inline-block font-bold px-2 py-0.5 rounded text-xs',
-                          p.isLowStock ? 'bg-red-50 text-red-700 border border-red-200' : 'text-slate-900'
-                        )}>
+                        <span className="inline-block font-bold text-slate-900 text-xs">
                           {p.totalStock} {p.uom}
                         </span>
                         {p.totalReserved > 0 && (

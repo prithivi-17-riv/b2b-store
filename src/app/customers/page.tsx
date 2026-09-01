@@ -158,16 +158,12 @@ export default function CustomersPage() {
                   <th className="p-3.5">Contact & City</th>
                   <th className="p-3.5">GSTIN / Type</th>
                   <th className="p-3.5">Assigned Rep</th>
-                  <th className="p-3.5 text-right">Outstanding</th>
                   <th className="p-3.5 text-right">Credit Limit</th>
                   <th className="p-3.5 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {customers.map((c) => {
-                  const utilization = (c.currentOutstanding / (c.creditLimit || 1)) * 100;
-                  const isOverLimit = c.currentOutstanding > c.creditLimit;
-
                   return (
                     <tr key={c.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="p-3.5">
@@ -198,23 +194,9 @@ export default function CustomersPage() {
                         <span className="text-slate-700 font-medium">{c.assignedEmployee?.name || 'Unassigned'}</span>
                       </td>
                       <td className="p-3.5 text-right">
-                        <span className={clsx('font-bold', isOverLimit ? 'text-red-600' : 'text-slate-900')}>
-                          {formatIndianCurrency(c.currentOutstanding)}
-                        </span>
-                        {isOverLimit && (
-                          <span className="block text-[10px] text-red-500 font-semibold">Limit Exceeded</span>
-                        )}
-                      </td>
-                      <td className="p-3.5 text-right">
-                        <span className="text-slate-600 font-medium">
+                        <span className="text-slate-900 font-bold">
                           {formatIndianCurrency(c.creditLimit)}
                         </span>
-                        <div className="w-20 bg-slate-100 rounded-full h-1.5 ml-auto mt-1 overflow-hidden">
-                          <div
-                            className={clsx('h-full', utilization > 90 ? 'bg-red-500' : utilization > 70 ? 'bg-amber-500' : 'bg-emerald-500')}
-                            style={{ width: `${Math.min(100, utilization)}%` }}
-                          />
-                        </div>
                       </td>
                       <td className="p-3.5 text-center">
                         <div className="flex items-center justify-center gap-2">

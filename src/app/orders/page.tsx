@@ -20,12 +20,10 @@ import clsx from 'clsx';
 
 const STATUS_TABS = [
   { label: 'All Orders', value: 'ALL' },
-  { label: 'Submitted', value: 'SUBMITTED' },
-  { label: 'Approved', value: 'APPROVED' },
-  { label: 'Stock Reserved', value: 'STOCK_RESERVED' },
-  { label: 'Packed', value: 'PACKED' },
-  { label: 'Dispatched', value: 'DISPATCHED' },
+  { label: 'Confirmed', value: 'CONFIRMED' },
   { label: 'Delivered', value: 'DELIVERED' },
+  { label: 'Drafts', value: 'DRAFT' },
+  { label: 'Cancelled', value: 'CANCELLED' },
 ];
 
 export default function OrdersPage() {
@@ -166,12 +164,10 @@ export default function OrdersPage() {
                       <span className={clsx(
                         'inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider',
                         o.status === 'DELIVERED' && 'bg-emerald-100 text-emerald-800',
-                        o.status === 'DISPATCHED' && 'bg-purple-100 text-purple-800',
-                        o.status === 'PACKED' && 'bg-indigo-100 text-indigo-800',
-                        o.status === 'STOCK_RESERVED' && 'bg-amber-100 text-amber-800',
-                        o.status === 'APPROVED' && 'bg-blue-100 text-blue-800',
-                        o.status === 'SUBMITTED' && 'bg-amber-50 text-amber-700 border border-amber-300',
+                        o.status === 'CONFIRMED' && 'bg-blue-100 text-blue-800',
+                        o.status === 'CANCELLED' && 'bg-red-100 text-red-800',
                         o.status === 'DRAFT' && 'bg-slate-100 text-slate-600',
+                        !['DELIVERED', 'CONFIRMED', 'CANCELLED', 'DRAFT'].includes(o.status) && 'bg-amber-100 text-amber-800'
                       )}>
                         {o.status.replace('_', ' ')}
                       </span>

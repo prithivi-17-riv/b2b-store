@@ -12,7 +12,6 @@ import {
   Plus,
   Minus,
   Trash2,
-  AlertTriangle,
   CheckCircle2,
   Save,
   Send,
@@ -21,7 +20,6 @@ import {
   Info,
   Layers,
   ArrowLeft,
-  DollarSign,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -58,18 +56,15 @@ function CreateOrderContent() {
   const [customers, setCustomers] = useState<any[]>([]);
   const [priceCategories, setPriceCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
-  const [warehouses, setWarehouses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   // Order State
   const [selectedCustomerId, setSelectedCustomerId] = useState(initialCustId || '');
   const [selectedPriceCatId, setSelectedPriceCatId] = useState('');
-  const [selectedWarehouseId, setSelectedWarehouseId] = useState('');
   const [orderItems, setOrderItems] = useState<OrderLineItem[]>([]);
   const [orderDiscount, setOrderDiscount] = useState(0);
   const [notes, setNotes] = useState('');
-  const [overrideCredit, setOverrideCredit] = useState(false);
 
   // Search filter for products catalog picker
   const [productSearch, setProductSearch] = useState('');
@@ -82,31 +77,24 @@ function CreateOrderContent() {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const [custRes, pcatRes, prodRes, whRes] = await Promise.all([
+      const [custRes, pcatRes, prodRes] = await Promise.all([
         fetch('/api/customers'),
         fetch('/api/pricing/categories'),
         fetch('/api/products'),
-        fetch('/api/warehouses'),
       ]);
 
       const custData = await custRes.json();
       const pcatData = await pcatRes.json();
       const prodData = await prodRes.json();
-      const whData = await whRes.json();
 
       setCustomers(custData.customers || []);
       setPriceCategories(pcatData.priceCategories || []);
       setProducts(prodData.products || []);
-      setWarehouses(whData.warehouses || []);
 
       // Defaults
       if (pcatData.priceCategories?.length > 0) {
         const bulkCat = pcatData.priceCategories.find((c: any) => c.name === 'Bulk' || c.code === 'BULK');
         setSelectedPriceCatId(bulkCat ? bulkCat.id : pcatData.priceCategories[0].id);
-      }
-
-      if (whData.warehouses?.length > 0) {
-        setSelectedWarehouseId(whData.warehouses[0].id);
       }
 
       if (initialCustId && custData.customers?.length > 0) {
@@ -164,16 +152,6 @@ function CreateOrderContent() {
     return calculateOrderTaxes(inputs, sellerStateCode, buyerStateCode, orderDiscount);
   }, [orderItems, selectedCustomer, orderDiscount]);
 
-  // Credit Limit Analysis
-  const creditAnalysis = useMemo(() => {
-    if (!selectedCustomer) return { isExceeded: false, newOutstanding: 0, available: 0 };
-
-    const newOutstanding = selectedCustomer.currentOutstanding + calculations.grandTotal;
-    const isExceeded = newOutstanding > selectedCustomer.creditLimit;
-    const available = Math.max(0, selectedCustomer.creditLimit - selectedCustomer.currentOutstanding);
-
-    return { isExceeded, newOutstanding, available };
-  }, [selectedCustomer, calculations.grandTotal]);
 
   // Add or increment item
   const handleAddProduct = (prod: any) => {
@@ -240,7 +218,6 @@ function CreateOrderContent() {
     const payload = {
       customerId: selectedCustomerId,
       priceCategoryId: selectedPriceCatId,
-      warehouseId: selectedWarehouseId,
       items: orderItems.map((i) => ({
         productId: i.productId,
         quantity: i.quantity,
@@ -249,7 +226,6 @@ function CreateOrderContent() {
       orderDiscountAmount: orderDiscount,
       isDraft,
       notes,
-      overrideCreditLimit: overrideCredit,
     };
 
     if (!isOnline) {
@@ -347,7 +323,7 @@ function CreateOrderContent() {
             <option value="">-- Choose Customer Store --</option>
             {customers.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.storeName} ({c.city}) — Outstanding: ₹{c.currentOutstanding.toLocaleString()}
+                {c.storeName} ({c.city})
               </option>
             ))}
           </select>
@@ -363,17 +339,6 @@ function CreateOrderContent() {
                 <p className="text-[11px] text-slate-500">
                   Payment Terms: <span className="font-semibold text-slate-700">{selectedCustomer.paymentTermsDays} Days</span>
                 </p>
-              </div>
-
-              <div className="flex items-center gap-4 text-right">
-                <div>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Outstanding</span>
-                  <span className="font-bold text-slate-900">{formatIndianCurrency(selectedCustomer.currentOutstanding)}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Credit Limit</span>
-                  <span className="font-bold text-slate-600">{formatIndianCurrency(selectedCustomer.creditLimit)}</span>
-                </div>
               </div>
             </div>
           )}
@@ -401,34 +366,6 @@ function CreateOrderContent() {
           </p>
         </div>
       </div>
-
-      {/* Credit Limit Alert Banner (if exceeded) */}
-      {creditAnalysis.isExceeded && (
-        <div className="bg-red-50 border border-red-300 rounded-2xl p-4 text-xs text-red-900 flex items-start gap-3 shadow-xs">
-          <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <strong className="font-bold block text-sm">Credit Limit Warning</strong>
-            <span>
-              Total exposure after this order (₹{creditAnalysis.newOutstanding.toLocaleString()}) exceeds credit limit of ₹{selectedCustomer?.creditLimit.toLocaleString()}.
-            </span>
-            {user?.role === 'ADMIN' ? (
-              <label className="flex items-center gap-2 mt-2 font-semibold text-slate-900 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={overrideCredit}
-                  onChange={(e) => setOverrideCredit(e.target.checked)}
-                  className="rounded text-emerald-600 focus:ring-emerald-500"
-                />
-                <span>Administrator Override Granted (Allow Order Submission)</span>
-              </label>
-            ) : (
-              <p className="text-[11px] text-red-700 mt-1 font-medium">
-                * Order can be submitted for Administrator Review & Approval.
-              </p>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Main Order Workspace: Line Items & Catalog */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

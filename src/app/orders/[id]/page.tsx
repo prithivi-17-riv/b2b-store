@@ -7,19 +7,8 @@ import { useAuth } from '@/lib/context/AuthContext';
 import { formatIndianCurrency } from '@/lib/gst';
 import {
   ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Truck,
   Receipt,
   FileText,
-  Building,
-  User,
-  ShieldCheck,
-  AlertTriangle,
-  Boxes,
-  MapPin,
-  Phone,
-  Printer,
   RotateCcw,
 } from 'lucide-react';
 import clsx from 'clsx';
@@ -31,16 +20,6 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-
-  // Dispatch modal state
-  const [showDispatchModal, setShowDispatchModal] = useState(false);
-  const [vehicleNumber, setVehicleNumber] = useState('TN 38 BJ 4590');
-  const [deliveryNotes, setDeliveryNotes] = useState('');
-
-  // Delivery POD modal state
-  const [showPodModal, setShowPodModal] = useState(false);
-  const [recipientName, setRecipientName] = useState('');
-  const [podNotes, setPodNotes] = useState('');
 
   useEffect(() => {
     fetchOrder();
@@ -74,8 +53,6 @@ export default function OrderDetailPage() {
       });
 
       if (res.ok) {
-        setShowDispatchModal(false);
-        setShowPodModal(false);
         fetchOrder();
       } else {
         const err = await res.json();
@@ -105,63 +82,8 @@ export default function OrderDetailPage() {
           <span>Back to All Orders</span>
         </Link>
 
-        {/* Workflow Transition Action Buttons */}
+        {/* Direct Action Buttons */}
         <div className="flex items-center gap-2 flex-wrap">
-          {order.status === 'SUBMITTED' && user?.role === 'ADMIN' && (
-            <button
-              onClick={() => handleStatusUpdate('APPROVED')}
-              disabled={updating}
-              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Approve Order</span>
-            </button>
-          )}
-
-          {order.status === 'APPROVED' && (user?.role === 'ADMIN' || user?.role === 'WAREHOUSE_STAFF') && (
-            <button
-              onClick={() => handleStatusUpdate('STOCK_RESERVED')}
-              disabled={updating}
-              className="flex items-center gap-1.5 bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs"
-            >
-              <Boxes className="w-4 h-4" />
-              <span>Reserve Warehouse Stock</span>
-            </button>
-          )}
-
-          {order.status === 'STOCK_RESERVED' && (user?.role === 'ADMIN' || user?.role === 'WAREHOUSE_STAFF') && (
-            <button
-              onClick={() => handleStatusUpdate('PACKED')}
-              disabled={updating}
-              className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Mark Order Packed</span>
-            </button>
-          )}
-
-          {order.status === 'PACKED' && (user?.role === 'ADMIN' || user?.role === 'WAREHOUSE_STAFF') && (
-            <button
-              onClick={() => setShowDispatchModal(true)}
-              disabled={updating}
-              className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs"
-            >
-              <Truck className="w-4 h-4" />
-              <span>Dispatch & Generate GST Bill</span>
-            </button>
-          )}
-
-          {order.status === 'DISPATCHED' && (user?.role === 'ADMIN' || user?.role === 'DELIVERY_STAFF') && (
-            <button
-              onClick={() => setShowPodModal(true)}
-              disabled={updating}
-              className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Confirm Delivery (POD)</span>
-            </button>
-          )}
-
           {order.invoice && (
             <Link
               href={`/invoices/${order.invoice.id}`}
@@ -170,6 +92,32 @@ export default function OrderDetailPage() {
               <Receipt className="w-4 h-4 text-emerald-400" />
               <span>View GST Tax Invoice</span>
             </Link>
+          )}
+
+          {!order.invoice && order.status !== 'CANCELLED' && (
+            <button
+              onClick={() => handleStatusUpdate('GENERATE_INVOICE')}
+              disabled={updating}
+              className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs"
+            >
+              <Receipt className="w-4 h-4" />
+              <span>Generate GST Tax Invoice</span>
+            </button>
+          )}
+
+          {order.status !== 'CANCELLED' && user?.role === 'ADMIN' && (
+            <button
+              onClick={() => {
+                if (confirm('Are you sure you want to cancel this order?')) {
+                  handleStatusUpdate('CANCELLED');
+                }
+              }}
+              disabled={updating}
+              className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Cancel Order</span>
+            </button>
           )}
         </div>
       </div>
@@ -183,11 +131,10 @@ export default function OrderDetailPage() {
               <span className={clsx(
                 'px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider',
                 order.status === 'DELIVERED' && 'bg-emerald-100 text-emerald-800',
-                order.status === 'DISPATCHED' && 'bg-purple-100 text-purple-800',
-                order.status === 'PACKED' && 'bg-indigo-100 text-indigo-800',
-                order.status === 'STOCK_RESERVED' && 'bg-amber-100 text-amber-800',
-                order.status === 'APPROVED' && 'bg-blue-100 text-blue-800',
-                order.status === 'SUBMITTED' && 'bg-amber-50 text-amber-700 border border-amber-300',
+                order.status === 'CONFIRMED' && 'bg-blue-100 text-blue-800',
+                order.status === 'CANCELLED' && 'bg-red-100 text-red-800',
+                order.status === 'DRAFT' && 'bg-slate-100 text-slate-700',
+                !['DELIVERED', 'CONFIRMED', 'CANCELLED', 'DRAFT'].includes(order.status) && 'bg-slate-100 text-slate-800'
               )}>
                 {order.status.replace('_', ' ')}
               </span>
@@ -217,21 +164,23 @@ export default function OrderDetailPage() {
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
             <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Pricing & Sales Officer</span>
             <p className="font-bold text-slate-900">Tier: {order.priceCategory?.name}</p>
-            <p className="text-slate-600 mt-0.5">Sales Officer: {order.salesEmployee?.name}</p>
-            <p className="text-slate-500 mt-0.5">Warehouse: {order.warehouse?.name}</p>
+            <p className="text-slate-600 mt-0.5">Sales Officer: {order.salesEmployee?.name || 'Admin'}</p>
           </div>
 
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Invoice & Logistics</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">GST Tax Invoice</span>
             {order.invoice ? (
-              <p className="font-bold text-emerald-700">Invoice: {order.invoice.invoiceNumber}</p>
+              <>
+                <p className="font-bold text-emerald-700">Invoice: {order.invoice.invoiceNumber}</p>
+                <Link
+                  href={`/invoices/${order.invoice.id}`}
+                  className="text-xs text-blue-600 hover:underline font-semibold block mt-0.5"
+                >
+                  View Bill & Print PDF &rarr;
+                </Link>
+              </>
             ) : (
-              <p className="text-slate-400 font-medium">Invoice will generate upon dispatch</p>
-            )}
-            {order.delivery ? (
-              <p className="text-slate-700 mt-0.5">Vehicle: {order.delivery.vehicleNumber || 'Assigned'}</p>
-            ) : (
-              <p className="text-slate-400 mt-0.5">Delivery queue pending</p>
+              <p className="text-slate-400 font-medium">Invoice pending generation</p>
             )}
           </div>
         </div>
@@ -331,102 +280,8 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      {/* Dispatch Modal */}
-      {showDispatchModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-xs">
-            <h2 className="text-base font-bold text-slate-900 mb-4">Dispatch Order & Issue GST Invoice</h2>
-            <div className="space-y-3">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Delivery Vehicle Number *</label>
-                <input
-                  type="text"
-                  value={vehicleNumber}
-                  onChange={(e) => setVehicleNumber(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 uppercase font-mono font-bold"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Dispatch Notes / Route</label>
-                <textarea
-                  rows={2}
-                  value={deliveryNotes}
-                  onChange={(e) => setDeliveryNotes(e.target.value)}
-                  placeholder="e.g. Route 3 Peelamedu -> Gandhipuram"
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2"
-                />
-              </div>
-              <p className="text-[11px] text-slate-500">
-                * Confirming dispatch will automatically deduct inventory, generate GST Tax Invoice, and notify delivery staff.
-              </p>
-            </div>
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
-              <button
-                type="button"
-                onClick={() => setShowDispatchModal(false)}
-                className="px-4 py-2 border border-slate-300 rounded-lg font-semibold text-slate-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => handleStatusUpdate('DISPATCHED', { vehicleNumber, notes: deliveryNotes })}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold shadow-xs"
-              >
-                Confirm Dispatch
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Proof of Delivery Modal */}
-      {showPodModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-xs">
-            <h2 className="text-base font-bold text-slate-900 mb-4">Record Proof of Delivery (POD)</h2>
-            <div className="space-y-3">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Received By (Store Manager Name) *</label>
-                <input
-                  type="text"
-                  required
-                  value={recipientName}
-                  onChange={(e) => setRecipientName(e.target.value)}
-                  placeholder="e.g. K. Senthil"
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 font-bold"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Delivery Notes / Acknowledgement</label>
-                <textarea
-                  rows={2}
-                  value={podNotes}
-                  onChange={(e) => setPodNotes(e.target.value)}
-                  placeholder="e.g. All bags and cartons delivered intact, signed on delivery slip."
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
-              <button
-                type="button"
-                onClick={() => setShowPodModal(false)}
-                className="px-4 py-2 border border-slate-300 rounded-lg font-semibold text-slate-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => handleStatusUpdate('DELIVERED', { recipientName, notes: podNotes })}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-xs"
-              >
-                Complete Delivery
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

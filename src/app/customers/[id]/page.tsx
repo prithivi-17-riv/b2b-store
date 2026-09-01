@@ -71,9 +71,6 @@ export default function CustomerDetailPage() {
     return <div className="p-12 text-center text-xs text-slate-400">Customer not found</div>;
   }
 
-  const utilization = ((customer.currentOutstanding || 0) / (customer.creditLimit || 1)) * 100;
-  const availableCredit = Math.max(0, customer.creditLimit - customer.currentOutstanding);
-
   return (
     <div className="space-y-6">
       {/* Back button & Title */}
@@ -133,20 +130,11 @@ export default function CustomerDetailPage() {
             </div>
           </div>
 
-          {/* Financial Overview Tiles */}
-          <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 min-w-80">
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Outstanding</span>
-              <p className="text-sm font-bold text-slate-900 mt-0.5">{formatIndianCurrency(customer.currentOutstanding)}</p>
-            </div>
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Credit Limit</span>
-              <p className="text-sm font-bold text-slate-700 mt-0.5">{formatIndianCurrency(customer.creditLimit)}</p>
-            </div>
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Available</span>
-              <p className="text-sm font-bold text-emerald-600 mt-0.5">{formatIndianCurrency(availableCredit)}</p>
-            </div>
+          {/* Account Overview Tile */}
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-56 text-right">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Credit Limit</span>
+            <p className="text-lg font-black text-slate-900 mt-0.5">{formatIndianCurrency(customer.creditLimit)}</p>
+            <p className="text-[11px] text-slate-500 font-medium mt-0.5">{customer.paymentTermsDays} Days Payment Terms</p>
           </div>
         </div>
       </div>

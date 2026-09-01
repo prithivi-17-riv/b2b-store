@@ -141,6 +141,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       }
     }
 
+    if (status === 'GENERATE_INVOICE' || (!order.invoice && status === 'CONFIRMED')) {
+      if (!order.invoice) {
+        await generateInvoiceForOrder(order.id, authUser.id);
+      }
+    }
+
     if (status === 'DELIVERED') {
       if (order.delivery) {
         await prisma.delivery.update({
@@ -151,31 +157,54 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             proofOfDeliveryNotes: notes || order.delivery.proofOfDeliveryNotes,
           },
         });
+      } else {
+        await prisma.delivery.create({
+          data: {
+            orderId: order.id,
+            invoiceId: order.invoice?.id || null,
+            status: 'DELIVERED',
+            actualDeliveryDate: new Date(),
+            dispatchTimestamp: new Date(),
+            vehicleNumber: vehicleNumber || 'TN 38 BJ 4590',
+            proofOfDeliveryNotes: notes || null,
+          },
+        });
       }
     }
 
     if (status === 'CANCELLED' || status === 'REJECTED') {
-      // Release any reserved stock
-      if (prevStatus === 'STOCK_RESERVED' || prevStatus === 'PICKING' || prevStatus === 'PACKED') {
-        for (const item of order.items) {
-          const stock = await prisma.inventoryStock.findUnique({
-            where: {
-              warehouseId_productId: {
-                warehouseId: order.warehouseId,
-                productId: item.productId,
-              },
+      // Return dispatched/reserved stock back to available
+      for (const item of order.items) {
+        const stock = await prisma.inventoryStock.findUnique({
+          where: {
+            warehouseId_productId: {
+              warehouseId: order.warehouseId,
+              productId: item.productId,
+            },
+          },
+        });
+        if (stock) {
+          await prisma.inventoryStock.update({
+            where: { id: stock.id },
+            data: {
+              availableQuantity: { increment: item.quantity },
+              dispatchedQuantity: { decrement: Math.min(stock.dispatchedQuantity, item.quantity) },
+              reservedQuantity: { decrement: Math.min(stock.reservedQuantity, item.quantity) },
             },
           });
-          if (stock && stock.reservedQuantity > 0) {
-            const releaseQty = Math.min(stock.reservedQuantity, item.quantity);
-            await prisma.inventoryStock.update({
-              where: { id: stock.id },
-              data: {
-                reservedQuantity: { decrement: releaseQty },
-                availableQuantity: { increment: releaseQty },
-              },
-            });
-          }
+
+          await prisma.stockMovement.create({
+            data: {
+              warehouseId: order.warehouseId,
+              productId: item.productId,
+              movementType: 'RETURN',
+              quantity: item.quantity,
+              referenceType: 'ORDER',
+              referenceId: order.orderNumber,
+              performedByUserId: authUser.id,
+              notes: `Order ${order.orderNumber} cancelled - stock restored`,
+            },
+          });
         }
       }
     }

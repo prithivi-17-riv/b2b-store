@@ -20,84 +20,30 @@ export async function GET(req: NextRequest) {
     const todaySales = todayOrders.reduce((sum, o) => sum + o.grandTotal, 0);
     const todayOrderCount = todayOrders.length;
 
-    // 2. Order status counts
-    const pendingOrdersCount = await prisma.order.count({
+    // 2. Order counts
+    const activeOrdersCount = await prisma.order.count({
       where: {
-        status: 'SUBMITTED',
+        status: { notIn: ['DELIVERED', 'CANCELLED', 'REJECTED'] },
         ...(authUser?.role === 'SALES_EMPLOYEE' ? { salesEmployeeId: authUser.id } : {}),
-      },
-    });
-
-    const approvedOrdersCount = await prisma.order.count({
-      where: {
-        status: 'APPROVED',
-        ...(authUser?.role === 'SALES_EMPLOYEE' ? { salesEmployeeId: authUser.id } : {}),
-      },
-    });
-
-    const pickingPackingCount = await prisma.order.count({
-      where: {
-        status: { in: ['STOCK_RESERVED', 'PICKING', 'PACKED'] },
-      },
-    });
-
-    const dispatchedOrdersCount = await prisma.order.count({
-      where: {
-        status: 'DISPATCHED',
       },
     });
 
     const deliveredOrdersCount = await prisma.order.count({
       where: {
         status: 'DELIVERED',
+        ...(authUser?.role === 'SALES_EMPLOYEE' ? { salesEmployeeId: authUser.id } : {}),
       },
     });
 
-    // 3. Customer Outstandings
-    const customers = await prisma.customer.findMany({
+    // 3. Customer count
+    const totalCustomersCount = await prisma.customer.count({
       where: {
         isActive: true,
         ...(authUser?.role === 'SALES_EMPLOYEE' ? { assignedEmployeeId: authUser.id } : {}),
       },
-      select: {
-        id: true,
-        storeName: true,
-        customerCode: true,
-        currentOutstanding: true,
-        creditLimit: true,
-        paymentTermsDays: true,
-      },
     });
 
-    const totalOutstanding = customers.reduce((sum, c) => sum + c.currentOutstanding, 0);
-    const customersNearLimit = customers.filter((c) => c.currentOutstanding >= c.creditLimit * 0.85);
-
-    // 4. Low stock products
-    const allProducts = await prisma.product.findMany({
-      where: { isActive: true },
-      include: {
-        inventoryStocks: true,
-        category: true,
-      },
-    });
-
-    const lowStockItems = allProducts
-      .map((p) => {
-        const available = p.inventoryStocks.reduce((sum, s) => sum + s.availableQuantity, 0);
-        return {
-          id: p.id,
-          name: p.name,
-          sku: p.sku,
-          uom: p.uom,
-          categoryName: p.category.name,
-          minStockLevel: p.minStockLevel,
-          available,
-          isLow: available <= p.minStockLevel,
-        };
-      })
-      .filter((p) => p.isLow);
-
-    // 5. Expiring batches
+    // 4. Expiring batches
     const sixtyDaysAhead = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
     const expiringBatches = await prisma.inventoryBatch.findMany({
       where: {
@@ -112,19 +58,20 @@ export async function GET(req: NextRequest) {
       take: 5,
     });
 
-    // 6. Recent Orders
+    // 5. Recent Orders
     const recentOrders = await prisma.order.findMany({
       where: authUser?.role === 'SALES_EMPLOYEE' ? { salesEmployeeId: authUser.id } : {},
       include: {
         customer: { select: { storeName: true, city: true } },
         salesEmployee: { select: { name: true } },
-        priceCategory: true,
+        priceCategory: { select: { name: true } },
+        invoice: { select: { id: true, invoiceNumber: true } },
       },
       orderBy: { orderDate: 'desc' },
-      take: 6,
+      take: 8,
     });
 
-    // 7. Sales Employee Performance
+    // 6. Sales Performance
     const salesEmployees = await prisma.user.findMany({
       where: { role: 'SALES_EMPLOYEE', isActive: true },
       include: {
@@ -150,20 +97,14 @@ export async function GET(req: NextRequest) {
         orders: todayOrderCount,
       },
       ordersSummary: {
-        pending: pendingOrdersCount,
-        approved: approvedOrdersCount,
-        processing: pickingPackingCount,
-        dispatched: dispatchedOrdersCount,
+        active: activeOrdersCount,
         delivered: deliveredOrdersCount,
+        total: todayOrderCount,
       },
-      finance: {
-        totalOutstanding: Number(totalOutstanding.toFixed(2)),
-        totalCustomers: customers.length,
-        nearLimitCount: customersNearLimit.length,
+      stats: {
+        totalCustomers: totalCustomersCount,
       },
       inventoryAlerts: {
-        lowStockCount: lowStockItems.length,
-        lowStockItems: lowStockItems.slice(0, 6),
         expiringBatchesCount: expiringBatches.length,
         expiringBatches,
       },

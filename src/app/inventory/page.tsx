@@ -27,7 +27,6 @@ export default function InventoryPage() {
   const [activeTab, setActiveTab] = useState<'stock' | 'batches' | 'movements'>('stock');
   const [movements, setMovements] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [lowStockFilter, setLowStockFilter] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Stock Adjustment Modal
@@ -58,12 +57,12 @@ export default function InventoryPage() {
     fetchBatches();
     fetchWarehouses();
     fetchMovements();
-  }, [lowStockFilter]);
+  }, []);
 
   const fetchInventory = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/inventory?lowStockOnly=${lowStockFilter}`);
+      const res = await fetch('/api/inventory');
       if (res.ok) {
         const data = await res.json();
         setInventory(data.inventory || []);
@@ -245,27 +244,15 @@ export default function InventoryPage() {
         </div>
 
         {activeTab === 'stock' && (
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={lowStockFilter}
-                onChange={(e) => setLowStockFilter(e.target.checked)}
-                className="rounded text-red-600 focus:ring-red-500"
-              />
-              <span>Low Stock Alerts Only</span>
-            </label>
-
-            <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-xs flex items-center gap-2">
-              <Search className="w-3.5 h-3.5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="text-xs bg-transparent focus:outline-hidden text-slate-800 w-44"
-              />
-            </div>
+          <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-xs flex items-center gap-2">
+            <Search className="w-3.5 h-3.5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="text-xs bg-transparent focus:outline-hidden text-slate-800 w-44"
+            />
           </div>
         )}
       </div>
@@ -279,7 +266,6 @@ export default function InventoryPage() {
                 <tr>
                   <th className="p-3.5">Product Name</th>
                   <th className="p-3.5">Category</th>
-                  <th className="p-3.5 text-right">Min Stock</th>
                   <th className="p-3.5 text-right">Available Qty</th>
                   <th className="p-3.5 text-right">Reserved</th>
                   <th className="p-3.5 text-right">Dispatched</th>
@@ -295,11 +281,8 @@ export default function InventoryPage() {
                       <span className="font-mono text-[10px] text-slate-400">{item.product.sku}</span>
                     </td>
                     <td className="p-3.5 text-slate-600 font-medium">{item.product.categoryName}</td>
-                    <td className="p-3.5 text-right font-medium text-slate-500">
-                      {item.product.minStockLevel} {item.product.uom}
-                    </td>
                     <td className="p-3.5 text-right">
-                      <span className={clsx('font-bold text-sm', item.isLowStock ? 'text-red-600' : 'text-slate-900')}>
+                      <span className="font-bold text-sm text-slate-900">
                         {item.available} {item.product.uom}
                       </span>
                     </td>
@@ -313,11 +296,8 @@ export default function InventoryPage() {
                       {formatIndianCurrency(item.valuation)}
                     </td>
                     <td className="p-3.5 text-center">
-                      <span className={clsx(
-                        'inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase',
-                        item.isLowStock ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'
-                      )}>
-                        {item.isLowStock ? 'Low Stock' : 'Normal'}
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800">
+                        In Stock
                       </span>
                     </td>
                   </tr>
