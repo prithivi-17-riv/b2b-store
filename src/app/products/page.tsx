@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import clsx from 'clsx';
+import ProductImage from '@/components/ProductImage';
 
 export default function ProductsPage() {
   const { user } = useAuth();
@@ -33,6 +34,7 @@ export default function ProductsPage() {
     sku: '',
     barcode: '',
     brand: '',
+    imageUrl: '',
     categoryId: '',
     uom: 'KG',
     packSize: '',
@@ -96,6 +98,7 @@ export default function ProductsPage() {
           sku: '',
           barcode: '',
           brand: '',
+          imageUrl: '',
           categoryId: '',
           uom: 'KG',
           packSize: '',
@@ -187,7 +190,7 @@ export default function ProductsPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="p-3.5">Product / Brand</th>
+                  <th className="p-3.5">Product Details</th>
                   <th className="p-3.5">Category & UOM</th>
                   <th className="p-3.5">HSN & GST %</th>
                   <th className="p-3.5 text-right">MRP</th>
@@ -204,11 +207,16 @@ export default function ProductsPage() {
                   return (
                     <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="p-3.5">
-                        <span className="font-bold text-slate-900 block">{p.name}</span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">{p.sku}</span>
-                          {p.brand && <span className="text-[11px] text-slate-500">{p.brand}</span>}
-                          {p.packSize && <span className="text-[10px] text-slate-400">({p.packSize})</span>}
+                        <div className="flex items-center gap-3">
+                          <ProductImage src={p.imageUrl} alt={p.name} size="md" />
+                          <div>
+                            <span className="font-bold text-slate-900 block">{p.name}</span>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">{p.sku}</span>
+                              {p.brand && <span className="text-[11px] text-slate-500">{p.brand}</span>}
+                              {p.packSize && <span className="text-[10px] text-slate-400">({p.packSize})</span>}
+                            </div>
+                          </div>
                         </div>
                       </td>
                       <td className="p-3.5">
@@ -284,6 +292,21 @@ export default function ProductsPage() {
                     placeholder="e.g. Kaveri Pure"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Product Photo URL (Optional)</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="url"
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                    className="flex-1 border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                    placeholder="https://images.unsplash.com/... or web image link"
+                  />
+                  <ProductImage src={formData.imageUrl} alt="Preview" size="md" />
+                </div>
+                <span className="text-[10px] text-slate-400 mt-1 block">Paste an image link for visual catalog identification</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

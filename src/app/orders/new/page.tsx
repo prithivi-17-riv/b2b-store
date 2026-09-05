@@ -22,6 +22,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import clsx from 'clsx';
+import ProductImage from '@/components/ProductImage';
 
 interface OrderLineItem {
   productId: string;
@@ -29,6 +30,7 @@ interface OrderLineItem {
   sku: string;
   uom: string;
   packSize?: string;
+  imageUrl?: string | null;
   hsnCode: string;
   gstRate: number;
   availableStock: number;
@@ -172,6 +174,7 @@ function CreateOrderContent() {
             sku: prod.sku,
             uom: prod.uom,
             packSize: prod.packSize,
+            imageUrl: prod.imageUrl,
             hsnCode: prod.hsnCode,
             gstRate: prod.gstRate,
             availableStock: prod.totalStock,
@@ -404,14 +407,17 @@ function CreateOrderContent() {
                   return (
                     <div key={item.productId} className="p-3.5 hover:bg-slate-50/50 space-y-2">
                       <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-xs font-bold text-slate-900">{item.productName}</p>
-                          <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
-                            <span className="font-mono">{item.sku}</span>
-                            <span>•</span>
-                            <span>HSN: {item.hsnCode}</span>
-                            <span>•</span>
-                            <span className="font-semibold text-emerald-700">GST {item.gstRate}%</span>
+                        <div className="flex items-center gap-3">
+                          <ProductImage src={item.imageUrl} alt={item.productName} size="sm" />
+                          <div>
+                            <p className="text-xs font-bold text-slate-900">{item.productName}</p>
+                            <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
+                              <span className="font-mono">{item.sku}</span>
+                              <span>•</span>
+                              <span>HSN: {item.hsnCode}</span>
+                              <span>•</span>
+                              <span className="font-semibold text-emerald-700">GST {item.gstRate}%</span>
+                            </div>
                           </div>
                         </div>
 
@@ -520,12 +526,15 @@ function CreateOrderContent() {
                 const isAdded = orderItems.some((i) => i.productId === p.id);
 
                 return (
-                  <div key={p.id} className="p-2.5 flex items-center justify-between hover:bg-slate-50 text-xs">
-                    <div className="min-w-0 pr-2">
-                      <p className="font-bold text-slate-900 truncate">{p.name}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
-                        {p.packSize || p.uom} • Stock: <span className="font-semibold text-slate-700">{p.totalStock}</span>
-                      </p>
+                  <div key={p.id} className="p-2.5 flex items-center justify-between hover:bg-slate-50 text-xs gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                      <ProductImage src={p.imageUrl} alt={p.name} size="sm" />
+                      <div className="min-w-0">
+                        <p className="font-bold text-slate-900 truncate">{p.name}</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">
+                          {p.packSize || p.uom} • Stock: <span className="font-semibold text-slate-700">{p.totalStock}</span>
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">

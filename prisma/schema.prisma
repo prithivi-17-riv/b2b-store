@@ -139,6 +139,7 @@ model Product {
   barcode          String?         @unique
   name             String
   brand            String?
+  imageUrl         String?
   categoryId       String
   category         ProductCategory @relation(fields: [categoryId], references: [id])
   description      String?

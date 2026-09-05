@@ -12,6 +12,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import clsx from 'clsx';
+import ProductImage from '@/components/ProductImage';
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -211,8 +212,13 @@ export default function OrderDetailPage() {
                 <tr key={it.id} className="hover:bg-slate-50">
                   <td className="p-3.5 text-slate-400 font-mono">{idx + 1}</td>
                   <td className="p-3.5">
-                    <span className="font-bold text-slate-900 block">{it.productName}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">{it.product?.sku}</span>
+                    <div className="flex items-center gap-2.5">
+                      <ProductImage src={it.product?.imageUrl} alt={it.productName} size="sm" />
+                      <div>
+                        <span className="font-bold text-slate-900 block">{it.productName}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{it.product?.sku}</span>
+                      </div>
+                    </div>
                   </td>
                   <td className="p-3.5 font-mono text-slate-700">{it.hsnCode}</td>
                   <td className="p-3.5 text-right font-bold text-slate-800">

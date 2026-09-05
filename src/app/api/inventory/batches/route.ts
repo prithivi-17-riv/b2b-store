@@ -73,16 +73,26 @@ export async function POST(req: NextRequest) {
       purchasePrice,
     } = body;
 
-    const numQty = Number(quantity || 0);
-    if (!warehouseId || !productId || !batchNumber || numQty <= 0) {
-      return NextResponse.json({ error: 'Warehouse, product, batch number, and quantity are required' }, { status: 400 });
+    let targetWarehouseId = warehouseId;
+    if (!targetWarehouseId) {
+      const defaultWh = await prisma.warehouse.findFirst({ where: { isActive: true } });
+      targetWarehouseId = defaultWh?.id;
     }
+
+    const numQty = Number(quantity || 0);
+    if (!targetWarehouseId || !productId || numQty <= 0) {
+      return NextResponse.json({ error: 'Product and valid quantity are required' }, { status: 400 });
+    }
+
+    const finalBatchNumber = (batchNumber && typeof batchNumber === 'string' && batchNumber.trim().length > 0)
+      ? batchNumber.trim().toUpperCase()
+      : `BAT-${Date.now().toString().slice(-6)}${Math.floor(10 + Math.random() * 90)}`;
 
     const batch = await prisma.inventoryBatch.create({
       data: {
-        warehouseId,
+        warehouseId: targetWarehouseId,
         productId,
-        batchNumber: batchNumber.trim().toUpperCase(),
+        batchNumber: finalBatchNumber,
         manufacturingDate: manufacturingDate ? new Date(manufacturingDate) : null,
         expiryDate: expiryDate ? new Date(expiryDate) : null,
         quantity: numQty,
@@ -94,13 +104,13 @@ export async function POST(req: NextRequest) {
     // Update or create InventoryStock
     const stock = await prisma.inventoryStock.upsert({
       where: {
-        warehouseId_productId: { warehouseId, productId },
+        warehouseId_productId: { warehouseId: targetWarehouseId, productId },
       },
       update: {
         availableQuantity: { increment: numQty },
       },
       create: {
-        warehouseId,
+        warehouseId: targetWarehouseId,
         productId,
         availableQuantity: numQty,
       },
@@ -108,7 +118,7 @@ export async function POST(req: NextRequest) {
 
     await prisma.stockMovement.create({
       data: {
-        warehouseId,
+        warehouseId: targetWarehouseId,
         productId,
         batchId: batch.id,
         movementType: 'PURCHASE_RECEIPT',
@@ -127,7 +137,7 @@ export async function POST(req: NextRequest) {
       action: 'CREATE_BATCH',
       entityType: 'INVENTORY_BATCH',
       entityId: batch.id,
-      newValues: { batchNumber, quantity: numQty, warehouseId },
+      newValues: { batchNumber: finalBatchNumber, quantity: numQty, warehouseId: targetWarehouseId },
     });
 
     return NextResponse.json({ batch, stock }, { status: 201 });

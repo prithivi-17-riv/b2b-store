@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
           minStockLevel: p.minStockLevel,
           mrp: p.mrp,
           purchasePrice: p.purchasePrice,
+          imageUrl: p.imageUrl,
         },
         stocksByWarehouse: p.inventoryStocks,
         batches: p.inventoryBatches,
@@ -91,20 +92,26 @@ export async function POST(req: NextRequest) {
     } = body;
 
     const numQty = Number(quantity);
-    if (!warehouseId || !productId || !numQty || numQty <= 0) {
-      return NextResponse.json({ error: 'Warehouse, product, and valid quantity are required' }, { status: 400 });
+    let targetWarehouseId = warehouseId;
+    if (!targetWarehouseId) {
+      const defaultWh = await prisma.warehouse.findFirst({ where: { isActive: true } });
+      targetWarehouseId = defaultWh?.id;
+    }
+
+    if (!targetWarehouseId || !productId || !numQty || numQty <= 0) {
+      return NextResponse.json({ error: 'Product and valid quantity are required' }, { status: 400 });
     }
 
     let stock = await prisma.inventoryStock.findUnique({
       where: {
-        warehouseId_productId: { warehouseId, productId },
+        warehouseId_productId: { warehouseId: targetWarehouseId, productId },
       },
     });
 
     if (!stock) {
       stock = await prisma.inventoryStock.create({
         data: {
-          warehouseId,
+          warehouseId: targetWarehouseId,
           productId,
           availableQuantity: 0,
         },
@@ -153,7 +160,7 @@ export async function POST(req: NextRequest) {
 
     await prisma.stockMovement.create({
       data: {
-        warehouseId,
+        warehouseId: targetWarehouseId,
         productId,
         batchId: batchId || null,
         movementType,
@@ -171,7 +178,7 @@ export async function POST(req: NextRequest) {
       action: 'STOCK_ADJUSTMENT',
       entityType: 'INVENTORY',
       entityId: productId,
-      newValues: { warehouseId, adjustmentType, quantity: numQty, reason },
+      newValues: { warehouseId: targetWarehouseId, adjustmentType, quantity: numQty, reason },
     });
 
     return NextResponse.json({ success: true });
