@@ -116,14 +116,30 @@ export async function POST(req: NextRequest) {
       initialStock,
     } = body;
 
-    if (!name || !sku || !categoryId || !hsnCode || mrp === undefined || purchasePrice === undefined) {
-      return NextResponse.json({ error: 'Name, SKU, category, HSN code, MRP and purchase price are required' }, { status: 400 });
+    const finalSku = (sku && typeof sku === 'string' && sku.trim().length > 0)
+      ? sku.trim().toUpperCase()
+      : `SKU-${Date.now().toString().slice(-6)}${Math.floor(10 + Math.random() * 90)}`;
+
+    const finalHsnCode = (hsnCode && typeof hsnCode === 'string' && hsnCode.trim().length > 0)
+      ? hsnCode.trim()
+      : '00000000';
+
+    const finalPurchasePrice = (purchasePrice !== undefined && purchasePrice !== null && purchasePrice !== '')
+      ? Number(purchasePrice)
+      : 0;
+
+    const finalMinStockLevel = (minStockLevel !== undefined && minStockLevel !== null && minStockLevel !== '')
+      ? Number(minStockLevel)
+      : 0;
+
+    if (!name || !categoryId || mrp === undefined) {
+      return NextResponse.json({ error: 'Name, category, and MRP are required' }, { status: 400 });
     }
 
     const product = await prisma.product.create({
       data: {
         name: name.trim(),
-        sku: sku.trim().toUpperCase(),
+        sku: finalSku,
         barcode: barcode ? barcode.trim() : null,
         brand: brand ? brand.trim() : null,
         imageUrl: imageUrl ? imageUrl.trim() : null,
@@ -131,12 +147,12 @@ export async function POST(req: NextRequest) {
         description: description ? description.trim() : null,
         uom: uom || 'KG',
         packSize: packSize ? packSize.trim() : null,
-        hsnCode: hsnCode.trim(),
+        hsnCode: finalHsnCode,
         gstRate: Number(gstRate ?? 5.0),
         cessRate: Number(cessRate ?? 0),
         mrp: Number(mrp),
-        purchasePrice: Number(purchasePrice),
-        minStockLevel: Number(minStockLevel ?? 10),
+        purchasePrice: finalPurchasePrice,
+        minStockLevel: finalMinStockLevel,
       },
     });
 

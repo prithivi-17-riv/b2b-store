@@ -84,10 +84,17 @@ export default function ProductsPage() {
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        sku: formData.sku || `SKU-${Date.now().toString().slice(-6)}${Math.floor(10 + Math.random() * 90)}`,
+        hsnCode: formData.hsnCode || '00000000',
+        purchasePrice: Number(formData.purchasePrice || 0),
+        minStockLevel: Number(formData.minStockLevel || 0),
+      };
       const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
@@ -99,14 +106,14 @@ export default function ProductsPage() {
           barcode: '',
           brand: '',
           imageUrl: '',
-          categoryId: '',
+          categoryId: categories[0]?.id || '',
           uom: 'KG',
           packSize: '',
           hsnCode: '',
           gstRate: 5.0,
           mrp: 0,
           purchasePrice: 0,
-          minStockLevel: 10,
+          minStockLevel: 0,
         });
       } else {
         const err = await res.json();
@@ -123,7 +130,7 @@ export default function ProductsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Product Master</h1>
-          <p className="text-xs text-slate-500">Manage FMCG grocery inventory, HSN codes, GST slabs & packaging</p>
+          <p className="text-xs text-slate-500">Manage FMCG grocery catalog, pricing & packaging</p>
         </div>
         <div className="flex items-center gap-2">
           {user?.role === 'ADMIN' && (
@@ -158,7 +165,7 @@ export default function ProductsPage() {
           <Search className="w-4 h-4 text-slate-400 shrink-0" />
           <input
             type="text"
-            placeholder="Search by Product Name, SKU, Barcode, Brand, or HSN Code..."
+            placeholder="Search by Product Name, Barcode, or Brand..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full text-xs text-slate-800 focus:outline-hidden bg-transparent"
@@ -192,7 +199,7 @@ export default function ProductsPage() {
                 <tr>
                   <th className="p-3.5">Product Details</th>
                   <th className="p-3.5">Category & UOM</th>
-                  <th className="p-3.5">HSN & GST %</th>
+                  <th className="p-3.5">GST %</th>
                   <th className="p-3.5 text-right">MRP</th>
                   <th className="p-3.5 text-right">Bulk Price</th>
                   <th className="p-3.5 text-right">Loose Price</th>
@@ -211,11 +218,12 @@ export default function ProductsPage() {
                           <ProductImage src={p.imageUrl} alt={p.name} size="md" />
                           <div>
                             <span className="font-bold text-slate-900 block">{p.name}</span>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">{p.sku}</span>
-                              {p.brand && <span className="text-[11px] text-slate-500">{p.brand}</span>}
-                              {p.packSize && <span className="text-[10px] text-slate-400">({p.packSize})</span>}
-                            </div>
+                            {(p.brand || p.packSize) && (
+                              <div className="flex items-center gap-2 mt-0.5">
+                                {p.brand && <span className="text-[11px] text-slate-500">{p.brand}</span>}
+                                {p.packSize && <span className="text-[10px] text-slate-400">({p.packSize})</span>}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -224,10 +232,9 @@ export default function ProductsPage() {
                         <span className="block text-[10px] text-slate-400 font-bold uppercase">{p.uom}</span>
                       </td>
                       <td className="p-3.5">
-                        <span className="font-mono text-slate-800 font-semibold">{p.hsnCode}</span>
                         <span className={clsx(
-                          'block text-[10px] font-bold mt-0.5',
-                          p.gstRate === 0 ? 'text-slate-500' : 'text-emerald-700'
+                          'inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase',
+                          p.gstRate === 0 ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700'
                         )}>
                           GST {p.gstRate}%
                         </span>
@@ -309,28 +316,7 @@ export default function ProductsPage() {
                 <span className="text-[10px] text-slate-400 mt-1 block">Paste an image link for visual catalog identification</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">SKU Code *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.sku}
-                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono uppercase focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
-                    placeholder="RICE-SON-05"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Barcode / EAN</label>
-                  <input
-                    type="text"
-                    value={formData.barcode}
-                    onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
-                    placeholder="890100100099"
-                  />
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Category *</label>
                   <select
@@ -344,9 +330,19 @@ export default function ProductsPage() {
                     ))}
                   </select>
                 </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Barcode / EAN</label>
+                  <input
+                    type="text"
+                    value={formData.barcode}
+                    onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                    placeholder="890100100099"
+                  />
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Unit of Measurement (UOM)</label>
                   <select
@@ -373,20 +369,9 @@ export default function ProductsPage() {
                     placeholder="e.g. 25 kg Bag / 15x1L"
                   />
                 </div>
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">HSN Code *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.hsnCode}
-                    onChange={(e) => setFormData({ ...formData, hsnCode: e.target.value })}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
-                    placeholder="10063010"
-                  />
-                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">GST Rate (%)</label>
                   <select
@@ -408,25 +393,6 @@ export default function ProductsPage() {
                     required
                     value={formData.mrp}
                     onChange={(e) => setFormData({ ...formData, mrp: Number(e.target.value) })}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Purchase Price (₹) *</label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.purchasePrice}
-                    onChange={(e) => setFormData({ ...formData, purchasePrice: Number(e.target.value) })}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Min Stock Alert</label>
-                  <input
-                    type="number"
-                    value={formData.minStockLevel}
-                    onChange={(e) => setFormData({ ...formData, minStockLevel: Number(e.target.value) })}
                     className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
                   />
                 </div>
