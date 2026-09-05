@@ -1,0 +1,1047 @@
+{
+  "metadata": {
+    "generatedAt": "2026-09-05T14:56:19.839Z",
+    "datasetName": "Annapoorna B2B FMCG Grocery Wholesale Showcase Dataset",
+    "description": "Realistic demonstration dataset containing products, pricing tiers, retail/supermarket customers, GST B2B orders, invoices, and inventory batches."
+  },
+  "summary": {
+    "totalProducts": 14,
+    "totalCategories": 8,
+    "totalCustomers": 5,
+    "totalOrders": 5,
+    "totalInvoices": 3,
+    "totalInventoryValuation": 4701750
+  },
+  "demoAccounts": [
+    {
+      "role": "ADMIN",
+      "name": "Rajesh Sharma",
+      "email": "admin@annapoorna.com",
+      "password": "admin123",
+      "description": "Full access to pricing matrix, approval, GST invoices, and company settings"
+    },
+    {
+      "role": "SALES_EMPLOYEE",
+      "name": "Arun Kumar",
+      "email": "sales@annapoorna.com",
+      "password": "sales123",
+      "description": "Mobile-first field sales desk and customer order bookings"
+    },
+    {
+      "role": "WAREHOUSE_STAFF",
+      "name": "Muthu Pandi",
+      "email": "warehouse@annapoorna.com",
+      "password": "warehouse123",
+      "description": "Stock inward receipts and batch management"
+    },
+    {
+      "role": "DELIVERY_STAFF",
+      "name": "Selvam K",
+      "email": "delivery@annapoorna.com",
+      "password": "delivery123",
+      "description": "Vehicle fleet dispatches and delivery tracking"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Rice & Grains",
+      "code": "RICE",
+      "description": "Raw, Boiled, Basmati & Specialty Rice Varieties"
+    },
+    {
+      "name": "Pulses & Dals",
+      "code": "PULSES",
+      "description": "Toor, Moong, Urad, Chana & Lentils"
+    },
+    {
+      "name": "Edible Oils & Ghee",
+      "code": "OILS",
+      "description": "Sunflower, Sesame, Groundnut, Palm & Ghee"
+    },
+    {
+      "name": "Flour & Atta",
+      "code": "FLOUR",
+      "description": "Wheat Atta, Maida, Sooji, Rava, Besan"
+    },
+    {
+      "name": "Sugar & Sweeteners",
+      "code": "SUGAR",
+      "description": "Refined Sugar, Jaggery, Country Sugar"
+    },
+    {
+      "name": "Spices & Masalas",
+      "code": "SPICES",
+      "description": "Chilli, Coriander, Turmeric, Pepper, Salt"
+    },
+    {
+      "name": "Cleaning & Detergents",
+      "code": "CLEANING",
+      "description": "Soaps, Detergent Powders, Floor Cleaners"
+    },
+    {
+      "name": "Packaged FMCG & Tea",
+      "code": "FMCG",
+      "description": "Tea, Coffee, Biscuits, Packaged Dry Foods"
+    }
+  ],
+  "priceCategories": [
+    {
+      "name": "Bulk",
+      "code": "BULK",
+      "description": "High-volume orders (50+ units), competitive wholesale margins"
+    },
+    {
+      "name": "Loose",
+      "code": "LOOSE",
+      "description": "Split bags and small quantity orders with handling cost"
+    },
+    {
+      "name": "Wholesale",
+      "code": "WHOLESALE",
+      "description": "Standard B2B tier for mid-sized supermarkets"
+    },
+    {
+      "name": "Retail",
+      "code": "RETAIL",
+      "description": "Direct kirana store retail pricing"
+    },
+    {
+      "name": "Special",
+      "code": "SPECIAL",
+      "description": "Key account contracted rate with special subsidy"
+    }
+  ],
+  "products": [
+    {
+      "id": "cmtoi709k000vdzu3paiqdxwx",
+      "name": "Ponni Boiled Rice Deluxe (25kg)",
+      "brand": "Annapoorna Royal",
+      "category": "Rice & Grains",
+      "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&auto=format&fit=crop&q=80",
+      "uom": "BAG",
+      "packSize": "25 kg Bag",
+      "mrp": 1650,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 1200
+        },
+        {
+          "tier": "Loose",
+          "price": 1300
+        },
+        {
+          "tier": "Wholesale",
+          "price": 1250
+        },
+        {
+          "tier": "Retail",
+          "price": 1450
+        },
+        {
+          "tier": "Special",
+          "price": 1180
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70c4001hdzu3sieaiv6y",
+      "name": "Sona Masoori Raw Rice Premium (25kg)",
+      "brand": "Kaveri Pure",
+      "category": "Rice & Grains",
+      "imageUrl": "https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&auto=format&fit=crop&q=80",
+      "uom": "BAG",
+      "packSize": "25 kg Bag",
+      "mrp": 1550,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 1150
+        },
+        {
+          "tier": "Loose",
+          "price": 1250
+        },
+        {
+          "tier": "Wholesale",
+          "price": 1200
+        },
+        {
+          "tier": "Retail",
+          "price": 1380
+        },
+        {
+          "tier": "Special",
+          "price": 1130
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70e3001zdzu3owxjp5kp",
+      "name": "Unpolished Toor Dal Grade A (per kg)",
+      "brand": "Desi Gold",
+      "category": "Pulses & Dals",
+      "imageUrl": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop&q=80",
+      "uom": "KG",
+      "packSize": "Loose / 50kg Gunny",
+      "mrp": 160,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 110
+        },
+        {
+          "tier": "Loose",
+          "price": 118
+        },
+        {
+          "tier": "Wholesale",
+          "price": 114
+        },
+        {
+          "tier": "Retail",
+          "price": 128
+        },
+        {
+          "tier": "Special",
+          "price": 108
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70gd002ldzu3w7o9ivts",
+      "name": "Urad Dal Gota White (per kg)",
+      "brand": "Desi Gold",
+      "category": "Pulses & Dals",
+      "imageUrl": "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=400&auto=format&fit=crop&q=80",
+      "uom": "KG",
+      "packSize": "Loose / 30kg Bag",
+      "mrp": 155,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 108
+        },
+        {
+          "tier": "Loose",
+          "price": 116
+        },
+        {
+          "tier": "Wholesale",
+          "price": 112
+        },
+        {
+          "tier": "Retail",
+          "price": 125
+        },
+        {
+          "tier": "Special",
+          "price": 105
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70i90033dzu3619xq0nx",
+      "name": "Moong Dal Washed Yellow (per kg)",
+      "brand": "Desi Gold",
+      "category": "Pulses & Dals",
+      "imageUrl": "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400&auto=format&fit=crop&q=80",
+      "uom": "KG",
+      "packSize": "Loose / 30kg Bag",
+      "mrp": 140,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 98
+        },
+        {
+          "tier": "Loose",
+          "price": 106
+        },
+        {
+          "tier": "Wholesale",
+          "price": 102
+        },
+        {
+          "tier": "Retail",
+          "price": 115
+        },
+        {
+          "tier": "Special",
+          "price": 95
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70k6003ldzu3ax7pdpbd",
+      "name": "Crystal Pure Sugar M30 (per kg)",
+      "brand": "Bannari Sugar",
+      "category": "Sugar & Sweeteners",
+      "imageUrl": "https://images.unsplash.com/photo-1622484212850-cab596d66e74?w=400&auto=format&fit=crop&q=80",
+      "uom": "KG",
+      "packSize": "50 kg Bag",
+      "mrp": 50,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 42
+        },
+        {
+          "tier": "Loose",
+          "price": 45
+        },
+        {
+          "tier": "Wholesale",
+          "price": 44
+        },
+        {
+          "tier": "Retail",
+          "price": 48
+        },
+        {
+          "tier": "Special",
+          "price": 41.5
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70m60043dzu3avmexxs4",
+      "name": "Gold Winner Refined Sunflower Oil (Carton 15L)",
+      "brand": "Gold Winner",
+      "category": "Edible Oils & Ghee",
+      "imageUrl": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&auto=format&fit=crop&q=80",
+      "uom": "CARTON",
+      "packSize": "15 x 1L Pouches",
+      "mrp": 2150,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 1650
+        },
+        {
+          "tier": "Loose",
+          "price": 1750
+        },
+        {
+          "tier": "Wholesale",
+          "price": 1700
+        },
+        {
+          "tier": "Retail",
+          "price": 1900
+        },
+        {
+          "tier": "Special",
+          "price": 1620
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70oa004ldzu3i1mwarv7",
+      "name": "Idhayam Gingelly Sesame Oil (Carton 10L)",
+      "brand": "Idhayam",
+      "category": "Edible Oils & Ghee",
+      "imageUrl": "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&auto=format&fit=crop&q=80",
+      "uom": "CARTON",
+      "packSize": "10 x 1L Bottles",
+      "mrp": 3300,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 2550
+        },
+        {
+          "tier": "Loose",
+          "price": 2750
+        },
+        {
+          "tier": "Wholesale",
+          "price": 2650
+        },
+        {
+          "tier": "Retail",
+          "price": 2950
+        },
+        {
+          "tier": "Special",
+          "price": 2500
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70ql0053dzu34ih8szq5",
+      "name": "Aashirvaad Shudh Chakki Atta (10kg Bag)",
+      "brand": "ITC Aashirvaad",
+      "category": "Flour & Atta",
+      "imageUrl": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop&q=80",
+      "uom": "BAG",
+      "packSize": "10 kg Poly Bag",
+      "mrp": 490,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 390
+        },
+        {
+          "tier": "Loose",
+          "price": 425
+        },
+        {
+          "tier": "Wholesale",
+          "price": 410
+        },
+        {
+          "tier": "Retail",
+          "price": 460
+        },
+        {
+          "tier": "Special",
+          "price": 380
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70ss005ldzu3aauovfyl",
+      "name": "Superior Maida Superfine (25kg Bag)",
+      "brand": "Annapoorna Royal",
+      "category": "Flour & Atta",
+      "imageUrl": "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&auto=format&fit=crop&q=80",
+      "uom": "BAG",
+      "packSize": "25 kg Bag",
+      "mrp": 980,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 740
+        },
+        {
+          "tier": "Loose",
+          "price": 800
+        },
+        {
+          "tier": "Wholesale",
+          "price": 770
+        },
+        {
+          "tier": "Retail",
+          "price": 880
+        },
+        {
+          "tier": "Special",
+          "price": 720
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70vs0063dzu3m5th71py",
+      "name": "Everest Tikhalal Red Chilli Powder (Box 10kg)",
+      "brand": "Everest",
+      "category": "Spices & Masalas",
+      "imageUrl": "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=400&auto=format&fit=crop&q=80",
+      "uom": "BOX",
+      "packSize": "20 x 500g Pouches",
+      "mrp": 2900,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 2150
+        },
+        {
+          "tier": "Loose",
+          "price": 2350
+        },
+        {
+          "tier": "Wholesale",
+          "price": 2250
+        },
+        {
+          "tier": "Retail",
+          "price": 2550
+        },
+        {
+          "tier": "Special",
+          "price": 2100
+        }
+      ]
+    },
+    {
+      "id": "cmtoi70yn006ldzu3yh1hpol6",
+      "name": "Tata Salt Vacuum Evaporated Iodized (Carton 25kg)",
+      "brand": "Tata Consumer",
+      "category": "Spices & Masalas",
+      "imageUrl": "https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=400&auto=format&fit=crop&q=80",
+      "uom": "CARTON",
+      "packSize": "25 x 1kg Packets",
+      "mrp": 625,
+      "gstRate": 0,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 460
+        },
+        {
+          "tier": "Loose",
+          "price": 500
+        },
+        {
+          "tier": "Wholesale",
+          "price": 480
+        },
+        {
+          "tier": "Retail",
+          "price": 550
+        },
+        {
+          "tier": "Special",
+          "price": 450
+        }
+      ]
+    },
+    {
+      "id": "cmtoi71120073dzu3kkwv4ugl",
+      "name": "Surf Excel Quick Wash Detergent (Carton 12kg)",
+      "brand": "Hindustan Unilever",
+      "category": "Cleaning & Detergents",
+      "imageUrl": "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=400&auto=format&fit=crop&q=80",
+      "uom": "CARTON",
+      "packSize": "12 x 1kg Packs",
+      "mrp": 1980,
+      "gstRate": 18,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 1490
+        },
+        {
+          "tier": "Loose",
+          "price": 1620
+        },
+        {
+          "tier": "Wholesale",
+          "price": 1550
+        },
+        {
+          "tier": "Retail",
+          "price": 1750
+        },
+        {
+          "tier": "Special",
+          "price": 1460
+        }
+      ]
+    },
+    {
+      "id": "cmtoi713g007ldzu39sx1gnd1",
+      "name": "Tata Tea Premium Leaf (Master Box 10kg)",
+      "brand": "Tata Consumer",
+      "category": "Packaged FMCG & Tea",
+      "imageUrl": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop&q=80",
+      "uom": "BOX",
+      "packSize": "20 x 500g Cartons",
+      "mrp": 3400,
+      "gstRate": 5,
+      "prices": [
+        {
+          "tier": "Bulk",
+          "price": 2580
+        },
+        {
+          "tier": "Loose",
+          "price": 2780
+        },
+        {
+          "tier": "Wholesale",
+          "price": 2680
+        },
+        {
+          "tier": "Retail",
+          "price": 3000
+        },
+        {
+          "tier": "Special",
+          "price": 2520
+        }
+      ]
+    }
+  ],
+  "customers": [
+    {
+      "id": "cmtoi715u0083dzu3ozt906yu",
+      "storeName": "Sri Lakshmi Stores",
+      "ownerName": "V. Ramasamy",
+      "phone": "9843012345",
+      "gstin": "33AAACL1234F1Z1",
+      "city": "Coimbatore",
+      "state": "Tamil Nadu",
+      "creditLimit": 500000,
+      "paymentTermsDays": 30,
+      "currentOutstanding": 145000
+    },
+    {
+      "id": "cmtoi716h0087dzu3277ch9gq",
+      "storeName": "ABC Supermarket",
+      "ownerName": "K. Balaji",
+      "phone": "9843054321",
+      "gstin": "33BBBPB5678G1Z2",
+      "city": "Coimbatore",
+      "state": "Tamil Nadu",
+      "creditLimit": 800000,
+      "paymentTermsDays": 21,
+      "currentOutstanding": 284000
+    },
+    {
+      "id": "cmtoi716w0089dzu32oosa4mk",
+      "storeName": "Kumar Traders",
+      "ownerName": "P. Kumar",
+      "phone": "9843098765",
+      "gstin": "33CCCPA9876H1Z3",
+      "city": "Tirupur",
+      "state": "Tamil Nadu",
+      "creditLimit": 300000,
+      "paymentTermsDays": 15,
+      "currentOutstanding": 85000
+    },
+    {
+      "id": "cmtoi717v008ddzu3omiqhny3",
+      "storeName": "XYZ Mega Mart (Bangalore)",
+      "ownerName": "Anil Deshmukh",
+      "phone": "9880198801",
+      "gstin": "29DDDPA4321J1Z4",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "creditLimit": 600000,
+      "paymentTermsDays": 15,
+      "currentOutstanding": 0
+    },
+    {
+      "id": "cmtoi7187008fdzu3xlf5ox6m",
+      "storeName": "Murugan Kirana & Provisions",
+      "ownerName": "M. Murugesan",
+      "phone": "9443211223",
+      "gstin": null,
+      "city": "Pollachi",
+      "state": "Tamil Nadu",
+      "creditLimit": 100000,
+      "paymentTermsDays": 7,
+      "currentOutstanding": 32000
+    }
+  ],
+  "sampleOrders": [
+    {
+      "orderNumber": "ORD-2026-5001",
+      "orderDate": "2026-08-20T00:00:00.000Z",
+      "status": "DELIVERED",
+      "subtotal": 100000,
+      "cgstAmount": 2500,
+      "sgstAmount": 2500,
+      "igstAmount": 0,
+      "grandTotal": 105000,
+      "items": [
+        {
+          "productName": "Ponni Boiled Rice Deluxe (25kg)",
+          "quantity": 50,
+          "unitRate": 1200,
+          "taxableAmount": 60000,
+          "totalAmount": 63000
+        },
+        {
+          "productName": "Crystal Pure Sugar M30 (per kg)",
+          "quantity": 100,
+          "unitRate": 42,
+          "taxableAmount": 4200,
+          "totalAmount": 4410
+        },
+        {
+          "productName": "Unpolished Toor Dal Grade A (per kg)",
+          "quantity": 50,
+          "unitRate": 110,
+          "taxableAmount": 5500,
+          "totalAmount": 5775
+        },
+        {
+          "productName": "Gold Winner Refined Sunflower Oil (Carton 15L)",
+          "quantity": 20,
+          "unitRate": 1650,
+          "taxableAmount": 33000,
+          "totalAmount": 34650
+        }
+      ]
+    },
+    {
+      "orderNumber": "ORD-2026-5002",
+      "orderDate": "2026-08-25T00:00:00.000Z",
+      "status": "DELIVERED",
+      "subtotal": 98250,
+      "cgstAmount": 3262.5,
+      "sgstAmount": 3262.5,
+      "igstAmount": 0,
+      "grandTotal": 104775,
+      "items": [
+        {
+          "productName": "Sona Masoori Raw Rice Premium (25kg)",
+          "quantity": 40,
+          "unitRate": 1200,
+          "taxableAmount": 48000,
+          "totalAmount": 50400
+        },
+        {
+          "productName": "Aashirvaad Shudh Chakki Atta (10kg Bag)",
+          "quantity": 30,
+          "unitRate": 750,
+          "taxableAmount": 22500,
+          "totalAmount": 23625
+        },
+        {
+          "productName": "Surf Excel Quick Wash Detergent (Carton 12kg)",
+          "quantity": 15,
+          "unitRate": 1850,
+          "taxableAmount": 27750,
+          "totalAmount": 30750
+        }
+      ]
+    },
+    {
+      "orderNumber": "ORD-2026-5003",
+      "orderDate": "2026-08-28T00:00:00.000Z",
+      "status": "CONFIRMED",
+      "subtotal": 11900,
+      "cgstAmount": 297.5,
+      "sgstAmount": 297.5,
+      "igstAmount": 0,
+      "grandTotal": 12495,
+      "items": [
+        {
+          "productName": "Unpolished Toor Dal Grade A (per kg)",
+          "quantity": 50,
+          "unitRate": 114,
+          "taxableAmount": 5700,
+          "totalAmount": 5985
+        },
+        {
+          "productName": "Crystal Pure Sugar M30 (per kg)",
+          "quantity": 100,
+          "unitRate": 62,
+          "taxableAmount": 6200,
+          "totalAmount": 6510
+        }
+      ]
+    },
+    {
+      "orderNumber": "ORD-2026-5004",
+      "orderDate": "2026-08-30T00:00:00.000Z",
+      "status": "DELIVERED",
+      "subtotal": 187400,
+      "cgstAmount": 0,
+      "sgstAmount": 0,
+      "igstAmount": 9370,
+      "grandTotal": 196770,
+      "items": [
+        {
+          "productName": "Tata Tea Premium Leaf (Master Box 10kg)",
+          "quantity": 30,
+          "unitRate": 2580,
+          "taxableAmount": 77400,
+          "totalAmount": 81270
+        },
+        {
+          "productName": "Everest Tikhalal Red Chilli Powder (Box 10kg)",
+          "quantity": 40,
+          "unitRate": 2150,
+          "taxableAmount": 86000,
+          "totalAmount": 90300
+        },
+        {
+          "productName": "Tata Salt Vacuum Evaporated Iodized (Carton 25kg)",
+          "quantity": 50,
+          "unitRate": 480,
+          "taxableAmount": 24000,
+          "totalAmount": 25200
+        }
+      ]
+    },
+    {
+      "orderNumber": "ORD-2026-5005",
+      "orderDate": "2026-09-02T00:00:00.000Z",
+      "status": "PENDING",
+      "subtotal": 17750,
+      "cgstAmount": 443.75,
+      "sgstAmount": 443.75,
+      "igstAmount": 0,
+      "grandTotal": 18638,
+      "items": [
+        {
+          "productName": "Moong Dal Washed Yellow (per kg)",
+          "quantity": 25,
+          "unitRate": 130,
+          "taxableAmount": 3250,
+          "totalAmount": 3412.5
+        },
+        {
+          "productName": "Ponni Boiled Rice Deluxe (25kg)",
+          "quantity": 10,
+          "unitRate": 1450,
+          "taxableAmount": 14500,
+          "totalAmount": 15225
+        }
+      ]
+    }
+  ],
+  "sampleInvoices": [
+    {
+      "invoiceNumber": "INV-2026-1001",
+      "invoiceDate": "2026-08-20T00:00:00.000Z",
+      "dueDate": "2026-09-19T00:00:00.000Z",
+      "paymentStatus": "PARTIALLY_PAID",
+      "taxableAmount": 102700,
+      "cgstAmount": 2567.5,
+      "sgstAmount": 2567.5,
+      "igstAmount": 0,
+      "grandTotal": 107835,
+      "paidAmount": 50000,
+      "balanceAmount": 57835,
+      "items": [
+        {
+          "productName": "Ponni Boiled Rice Deluxe (25kg)",
+          "quantity": 50,
+          "unitRate": 1200,
+          "taxableAmount": 60000,
+          "totalAmount": 63000
+        },
+        {
+          "productName": "Crystal Pure Sugar M30 (per kg)",
+          "quantity": 100,
+          "unitRate": 42,
+          "taxableAmount": 4200,
+          "totalAmount": 4410
+        },
+        {
+          "productName": "Unpolished Toor Dal Grade A (per kg)",
+          "quantity": 50,
+          "unitRate": 110,
+          "taxableAmount": 5500,
+          "totalAmount": 5775
+        },
+        {
+          "productName": "Gold Winner Refined Sunflower Oil (Carton 15L)",
+          "quantity": 20,
+          "unitRate": 1650,
+          "taxableAmount": 33000,
+          "totalAmount": 34650
+        }
+      ]
+    },
+    {
+      "invoiceNumber": "INV-2026-1002",
+      "invoiceDate": "2026-08-25T00:00:00.000Z",
+      "dueDate": "2026-09-15T00:00:00.000Z",
+      "paymentStatus": "PAID",
+      "taxableAmount": 98250,
+      "cgstAmount": 3262.5,
+      "sgstAmount": 3262.5,
+      "igstAmount": 0,
+      "grandTotal": 104775,
+      "paidAmount": 104775,
+      "balanceAmount": 0,
+      "items": [
+        {
+          "productName": "Sona Masoori Raw Rice Premium (25kg)",
+          "quantity": 40,
+          "unitRate": 1200,
+          "taxableAmount": 48000,
+          "totalAmount": 50400
+        },
+        {
+          "productName": "Aashirvaad Shudh Chakki Atta (10kg Bag)",
+          "quantity": 30,
+          "unitRate": 750,
+          "taxableAmount": 22500,
+          "totalAmount": 23625
+        },
+        {
+          "productName": "Surf Excel Quick Wash Detergent (Carton 12kg)",
+          "quantity": 15,
+          "unitRate": 1850,
+          "taxableAmount": 27750,
+          "totalAmount": 30750
+        }
+      ]
+    },
+    {
+      "invoiceNumber": "INV-2026-1003",
+      "invoiceDate": "2026-08-30T00:00:00.000Z",
+      "dueDate": "2026-09-14T00:00:00.000Z",
+      "paymentStatus": "PAID",
+      "taxableAmount": 187400,
+      "cgstAmount": 0,
+      "sgstAmount": 0,
+      "igstAmount": 9370,
+      "grandTotal": 196770,
+      "paidAmount": 196770,
+      "balanceAmount": 0,
+      "items": [
+        {
+          "productName": "Tata Tea Premium Leaf (Master Box 10kg)",
+          "quantity": 30,
+          "unitRate": 2580,
+          "taxableAmount": 77400,
+          "totalAmount": 81270
+        },
+        {
+          "productName": "Everest Tikhalal Red Chilli Powder (Box 10kg)",
+          "quantity": 40,
+          "unitRate": 2150,
+          "taxableAmount": 86000,
+          "totalAmount": 90300
+        },
+        {
+          "productName": "Tata Salt Vacuum Evaporated Iodized (Carton 25kg)",
+          "quantity": 50,
+          "unitRate": 480,
+          "taxableAmount": 24000,
+          "totalAmount": 25200
+        }
+      ]
+    }
+  ],
+  "inventoryBatches": [
+    {
+      "batchNumber": "BAT-2026-R01",
+      "product": "Ponni Boiled Rice Deluxe (25kg)",
+      "quantity": 250,
+      "mfgDate": "2026-06-15T00:00:00.000Z",
+      "expiryDate": "2027-06-14T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-R02",
+      "product": "Ponni Boiled Rice Deluxe (25kg)",
+      "quantity": 200,
+      "mfgDate": "2026-07-20T00:00:00.000Z",
+      "expiryDate": "2027-07-19T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-SM01",
+      "product": "Sona Masoori Raw Rice Premium (25kg)",
+      "quantity": 320,
+      "mfgDate": "2026-05-10T00:00:00.000Z",
+      "expiryDate": "2027-05-09T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-TD01",
+      "product": "Unpolished Toor Dal Grade A (per kg)",
+      "quantity": 1500,
+      "mfgDate": "2026-07-01T00:00:00.000Z",
+      "expiryDate": "2027-01-01T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-TD02",
+      "product": "Unpolished Toor Dal Grade A (per kg)",
+      "quantity": 1000,
+      "mfgDate": "2026-08-01T00:00:00.000Z",
+      "expiryDate": "2027-02-01T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-UD01",
+      "product": "Urad Dal Gota White (per kg)",
+      "quantity": 1800,
+      "mfgDate": "2026-06-25T00:00:00.000Z",
+      "expiryDate": "2026-12-25T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-MD01",
+      "product": "Moong Dal Washed Yellow (per kg)",
+      "quantity": 1200,
+      "mfgDate": "2026-07-10T00:00:00.000Z",
+      "expiryDate": "2027-01-10T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-SG01",
+      "product": "Crystal Pure Sugar M30 (per kg)",
+      "quantity": 8000,
+      "mfgDate": "2026-07-01T00:00:00.000Z",
+      "expiryDate": "2028-06-30T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-GW01",
+      "product": "Gold Winner Refined Sunflower Oil (Carton 15L)",
+      "quantity": 220,
+      "mfgDate": "2026-07-15T00:00:00.000Z",
+      "expiryDate": "2027-04-14T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-ID01",
+      "product": "Idhayam Gingelly Sesame Oil (Carton 10L)",
+      "quantity": 140,
+      "mfgDate": "2026-06-01T00:00:00.000Z",
+      "expiryDate": "2027-05-31T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-AT01",
+      "product": "Aashirvaad Shudh Chakki Atta (10kg Bag)",
+      "quantity": 350,
+      "mfgDate": "2026-08-01T00:00:00.000Z",
+      "expiryDate": "2026-11-01T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-MA01",
+      "product": "Superior Maida Superfine (25kg Bag)",
+      "quantity": 180,
+      "mfgDate": "2026-07-15T00:00:00.000Z",
+      "expiryDate": "2026-10-15T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-EV01",
+      "product": "Everest Tikhalal Red Chilli Powder (Box 10kg)",
+      "quantity": 95,
+      "mfgDate": "2026-06-01T00:00:00.000Z",
+      "expiryDate": "2027-05-31T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-TS01",
+      "product": "Tata Salt Vacuum Evaporated Iodized (Carton 25kg)",
+      "quantity": 210,
+      "mfgDate": "2026-04-01T00:00:00.000Z",
+      "expiryDate": "2028-03-31T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-SE01",
+      "product": "Surf Excel Quick Wash Detergent (Carton 12kg)",
+      "quantity": 120,
+      "mfgDate": "2026-05-15T00:00:00.000Z",
+      "expiryDate": "2028-05-14T00:00:00.000Z",
+      "status": "ACTIVE"
+    },
+    {
+      "batchNumber": "BAT-2026-TT01",
+      "product": "Tata Tea Premium Leaf (Master Box 10kg)",
+      "quantity": 85,
+      "mfgDate": "2026-06-20T00:00:00.000Z",
+      "expiryDate": "2027-06-19T00:00:00.000Z",
+      "status": "ACTIVE"
+    }
+  ]
+}

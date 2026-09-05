@@ -27,6 +27,21 @@ GSTR-1 Table 12 HSN Summary Returns
 
 ---
 
+## 📊 Pre-Loaded Showcase & Demonstration Dataset
+
+This repository includes a **comprehensive, realistic FMCG grocery wholesale dataset** ready for live demonstrations, reviews, and portfolio showcases:
+
+- **Direct Web Inspection**: Browse the full dataset in structured JSON directly on GitHub: [`data/showcase-dataset.json`](./data/showcase-dataset.json).
+- **Pre-Seeded Database Included**: The SQLite database file (`prisma/dev.db`) is committed in the repository, allowing you to clone and run the app immediately with zero database setup!
+- **Dataset Composition**:
+  - **14 FMCG Products with High-Resolution Photos**: Ponni Boiled Rice, Sona Masoori Rice, Unpolished Toor Dal, Urad Dal Gota, Moong Dal, Crystal Pure Sugar M30, Gold Winner Sunflower Oil, Idhayam Sesame Oil, Aashirvaad Chakki Atta, Superior Maida, Everest Chilli Powder, Tata Salt, Surf Excel Detergent, and Tata Tea Premium.
+  - **Multi-Tier Price Matrix**: Dynamic Bulk, Loose, Wholesale, Retail, and Special rates mapped across all products.
+  - **Diverse B2B Customer Profiles**: Premier supermarkets (`Sri Lakshmi Stores`, `ABC Supermarket`), commercial wholesalers (`Kumar Traders`), interstate buyers demonstrating 5% IGST (`XYZ Mega Mart Bangalore`), and Kirana retail stores (`Murugan Kirana`).
+  - **Sample B2B Orders & GST Invoices**: Active transactions covering all pipeline states (`DELIVERED`, `CONFIRMED`, `PENDING`), automated GST calculation, partial and full payment records (UPI & NEFT), and printable B2B Tax Invoices with PDF downloads.
+  - **FEFO Inventory Batches**: Realistic batches with manufacturing dates, expiry dates, stock quantities, and movement audit trails.
+
+---
+
 ## 🚀 Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
